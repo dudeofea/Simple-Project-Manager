@@ -31,6 +31,7 @@ defmodule TicketSystem.Web do
       use Phoenix.Controller
 
       alias TicketSystem.Repo
+	  alias TicketSystem.User
       import Ecto
       import Ecto.Query
 

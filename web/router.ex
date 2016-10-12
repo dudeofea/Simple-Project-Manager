@@ -15,6 +15,8 @@ defmodule TicketSystem.Router do
 
   scope "/", TicketSystem do
     pipe_through :browser # Use the default browser stack
+	get "/registration", RegistrationController, :new
+	post "/registration", RegistrationController, :create
 
     get "/", PageController, :index
   end
