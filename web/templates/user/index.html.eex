@@ -1,0 +1,5 @@
+<h3>Users</h3>
+<!-- show users if we have them -->
+<%= for u <- @users do %>
+	<p>something <%= u.username %></p>
+<%= end %>

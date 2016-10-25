@@ -10,12 +10,12 @@ defmodule TicketSystem.RegistrationController do
 		changeset = User.changeset(%User{}, user_params)
 
 		case TicketSystem.Registration.create(changeset, TicketSystem.Repo) do
-			{:ok, changeset} ->
+			{:ok, _changeset} ->
 				#sign in the user
 				conn
 				|> put_flash(:info, "Your account was created")
 				|> redirect(to: "/")
-			{:error, changeset} ->
+			{:error, _changeset} ->
 				#show error message
 				conn
 				|> put_flash(:info, "Unable to create account")
