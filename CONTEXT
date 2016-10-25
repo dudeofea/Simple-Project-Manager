@@ -1,0 +1,10 @@
+Next Steps:
+- Add user management
+	- Add an admin user / pass (no public registration)
+	- Add a user management page
+- Add a git remote server
+- Add project management
+- Add ticket management (under projects)
+	- Time estimates for tickets (static upon creation)
+	- Keep track of which ticket is being worked on (all operation happen through git)
+	- Calculate code speeds of users upon ticket completion

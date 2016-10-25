@@ -13,13 +13,14 @@ defmodule TicketSystem.Router do
     plug :accepts, ["json"]
   end
 
-  scope "/", TicketSystem do
-    pipe_through :browser # Use the default browser stack
-	get "/registration", RegistrationController, :new
-	post "/registration", RegistrationController, :create
+	#web page scope
+	scope "/", TicketSystem do
+		pipe_through :browser # Use the default browser stack
+		get "/registration", RegistrationController, :new
+		post "/registration", RegistrationController, :create
 
-    get "/", PageController, :index
-  end
+		get "/", PageController, :index
+	end
 
   # Other scopes may use custom stacks.
   # scope "/api", TicketSystem do
