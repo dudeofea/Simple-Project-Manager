@@ -23,6 +23,13 @@ defmodule TicketSystem.Router do
 		get "/", PageController, :index
 	end
 
+	#git remote scope
+	scope "/git", TicketSystem do
+		get "/info/refs", GitController, :info_refs
+		post "/git-upload-pack", GitController, :post_upload_pack
+		get "/*path", GitController, :index
+	end
+
   # Other scopes may use custom stacks.
   # scope "/api", TicketSystem do
   #   pipe_through :api
