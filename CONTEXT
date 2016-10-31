@@ -2,9 +2,13 @@ Next Steps:
 - Add user management
 	- Add an admin user / pass (no public registration)
 	- Add a user management page (add / view / edit / delete)
-- Add a git remote server
 - Add project management
 - Add ticket management (under projects)
 	- Time estimates for tickets (static upon creation)
 	- Keep track of which ticket is being worked on (all operation happen through git)
 	- Calculate code speeds of users upon ticket completion
+- Find a way to get ssh auth working with git
+	- Add a linux user with same name as user in db
+	- Restrict ssh for that user to being in /priv/users/<username>, and restrict to git-shell (only git ops)
+	- Have all git repos hosted be under /priv/projects/<project_id>
+	- Add symlinks like /priv/users/<username>/projects/<project_id> -> /priv/projects/<project_id> if user has access to that project
