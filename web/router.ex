@@ -27,6 +27,7 @@ defmodule TicketSystem.Router do
 	scope "/git", TicketSystem do
 		get "/info/refs", GitController, :info_refs
 		post "/git-upload-pack", GitController, :post_upload_pack
+		post "/git-receive-pack", GitController, :post_receive_pack
 		get "/*path", GitController, :index
 	end
 

@@ -1,3 +1,4 @@
+# Handles serving the git protocol to clients, just make sure the repo created is bare
 defmodule TicketSystem.GitController do
 	use TicketSystem.Web, :controller
 	alias TicketSystem.GitPort
@@ -9,6 +10,13 @@ defmodule TicketSystem.GitController do
 		send_git_response conn, "application/x-git-upload-pack-advertisement", packet
 	end
 
+	#get a list of refs in a git repo, this time for pushing changes to repo
+	def info_refs(conn, %{"service" => "git-receive-pack"}) do
+		packet = pkt_line("# service=git-receive-pack\n")
+		packet = packet <> GitPort.receive_pack("/home/denis/Documents/anonument-copy")
+		send_git_response conn, "application/x-git-receive-pack-advertisement", packet
+	end
+
 	#get a pack for a certain reference (posted by the client), and send all objects under that reference
 	def post_upload_pack(conn, _params) do
 		data = read_long_body(conn)
@@ -16,13 +24,14 @@ defmodule TicketSystem.GitController do
 		send_git_response conn, "application/x-git-upload-pack-result", packet
 	end
 
-	#get a specific reference in our git repo
-	def index(conn, _params) do
-		conn |> resp(200, "")
-	end
+	def post_receive_pack(conn, _params) do
+		data = read_long_body(conn)
+		packet = GitPort.post_receive_pack("/home/denis/Documents/anonument-copy", data)
+		send_git_response conn, "application/x-git-receive-pack-result", packet
+    end
 
 	#  thanks to Adrien Anselme (https://github.com/adanselm/exgitd/blob/master/web/controllers/git_controller.ex)
-	#  for these helper methods, as well as some base code above
+	#  for these helper methods, as well as most of the base code above
 
 	#turn a string into pkt-line format
 	defp pkt_line(line) do
