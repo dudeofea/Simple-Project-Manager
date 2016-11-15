@@ -23,6 +23,13 @@ defmodule TicketSystem.Router do
 		get "/", PageController, :index
 	end
 
+	#project management
+	scope "/projects", TicketSystem do
+		pipe_through :browser # Use the default browser stack
+		get "/", ProjectController, :index
+		post "/", ProjectController, :create
+	end
+
 	#git remote scope
 	scope "/git", TicketSystem do
 		get "/info/refs", GitController, :info_refs

@@ -1,0 +1,24 @@
+<h3>All Projects</h3>
+<!-- Form for creating a new user -->
+<%= form_for @blank_project, project_path(@conn, :create), [class: "project-modal"], fn f -> %>
+	<!-- show errors if we have them -->
+	<%= if f.errors != [] do %>
+		<div class="alert alert-danger">
+			<p>Oops, something went wrong! Please check the errors below:</p>
+			<ul>
+				<%= for {attr, message} <- f.errors do %>
+					<li><%= humanize(attr) %><%= translate_error(message) %></li>
+				<% end %>
+			</ul>
+		</div>
+	<% end %>
+	<!-- The form itself -->
+	<div class="form-group">
+		<label>Name</label>
+		<%= text_input f, :name, class: "form-control" %>
+	</div>
+	<div class="form-group">
+		<%= submit "Create", class: "btn btn-primary" %>
+		<%#= link("Login", to: session_path(@conn, :new), class: "btn btn-success pull-right" %>
+	</div>
+<% end %>
