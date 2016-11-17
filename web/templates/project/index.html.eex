@@ -1,6 +1,6 @@
 <h3>All Projects</h3>
 <!-- Form for creating a new user -->
-<%= form_for @blank_project, project_path(@conn, :create), [class: "project-modal"], fn f -> %>
+<%= form_for @project_info, project_path(@conn, :create), [class: "project-modal"], fn f -> %>
 	<!-- show errors if we have them -->
 	<%= if f.errors != [] do %>
 		<div class="alert alert-danger">

@@ -7,13 +7,15 @@ defmodule TicketSystem.Project do
     timestamps()
   end
 
+  @required_fields ~w(name)
+  @optional_fields ~w()
+
   @doc """
   Builds a changeset based on the `struct` and `params`.
   """
   def changeset(struct, params \\ %{}) do
     struct
-    |> cast(params, [])
-    |> validate_required([])
+	|> cast(params, @required_fields, @optional_fields)
   end
 
   #actions to take when creating a project

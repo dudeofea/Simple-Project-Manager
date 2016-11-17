@@ -19,3 +19,8 @@ import "phoenix_html"
 // paths "./socket" or full ones "web/static/js/socket".
 
 // import socket from "./socket"
+
+//load (Typescript) angular app from here
+import 'zone.js';
+import 'reflect-metadata';
+import "./main.ts"

@@ -3,8 +3,8 @@ defmodule TicketSystem.ProjectController do
 	alias TicketSystem.Project
 
 	def index(conn, _params) do
-		changeset = Project.changeset(%Project{})
-		render conn, blank_project: changeset
+		blank_project = Project.changeset(%Project{})
+		render conn, project_info: blank_project
 	end
 
 	#TODO: add endpoint for adding a new project
@@ -19,7 +19,7 @@ defmodule TicketSystem.ProjectController do
 			{:error, _changeset} ->
 				conn
 				|> put_flash(:info, "Unable to create project")
-				|> render("index.html", changeset: changeset)
+				|> render("index.html", project_info: changeset)
 		end
 	end
 end

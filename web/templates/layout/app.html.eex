@@ -12,6 +12,7 @@
   </head>
 
   <body>
+	<my-app>Loading...</my-app>
     <div class="container">
       <header class="header">
         <nav role="navigation">
