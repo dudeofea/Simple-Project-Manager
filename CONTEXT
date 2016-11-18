@@ -2,10 +2,12 @@ Next Steps:
 - Add user management
 	- Add an admin user / pass (no public registration)
 	- Add a user management page (add / view / edit / delete)
+	- When selecting a user, add thumb under Users header to indicate that results on other pages will be filtered for that user
 - Add ticket management (under projects)
 	- Time estimates for tickets (static upon creation)
 	- Keep track of which ticket is being worked on (all operation happen through git)
 	- Calculate code speeds of users upon ticket completion
+	- When selecting a project, add thumb under Projects header to indicate that results on other pages will be filtered for that project
 - Add project management
 	- Add a price to each ticket, pay through Stripe / Paypal / External
 	- Add hooks for pushing to staging / production servers once payment is received
@@ -17,16 +19,16 @@ Next Steps:
 	- Make server recipes (Ancible template files) that take in other existing servers as input arguments
 	- Example: A Postgres backup recipe that takes in a Postgres db as an input to backup from
 	- Example: A Phoenix web server recipe that takes in a Postgres db to connect to
-	- Possibly show all servers in nice d3 graph, with connections
+	- Possibly show all servers / server interconnections in nice d3 graph
 	- Also see if you can make Ancible recipes that let you run on existing servers so you can save money instead of spinning up new droplets
-- Find a way to get ssh auth working with git
-	- Add a linux user with same name as user in db
-	- Restrict ssh for that user to being in /priv/users/<username>, and restrict to git-shell (only git ops)
-	- Have all git repos hosted be under /priv/projects/<project_id>
-	- Add symlinks like /priv/users/<username>/projects/<project_id> -> /priv/projects/<project_id> if user has access to that project
 - Setup docker image to contain both webserver / sshd / repos
 	- Possibly just setup a docker git server with linux users (https://hub.docker.com/r/unixtastic/git-ssh-server/)
 	- Another docker ssh example: https://docs.docker.com/engine/examples/running_ssh_service/
+	- Add a linux users with same name as user in db when created
+	- Store (bare) git repos on docker image, these are the remote repos
+	- Each project is a linux user/group, each project folder is owned by that user/group
+	- When adding users to a project, we add them to that project's group, giving them access (via ssh) to the folder
+	- Make custom git-shell for tracking ticket checkouts / checkout permissions. Only one user can work on a ticket at a time
 
 How to charge clients:
 - New tickets cost money, they cost a fixed amount based on a time estimate of the developer and their code speed(s)
