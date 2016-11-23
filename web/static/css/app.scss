@@ -1,2 +1,56 @@
 //This file contains all styles, built on the Siimple framework
-@import "node_modules/siimple/src/siimple.scss"
+@import "node_modules/siimple/src/siimple.scss";
+
+//main colors
+$light: #FFF;
+$dark: #000;
+$primary: #25ced1;
+$secondary: #ea526f;
+$tertiary: #ff8a5b;
+
+//mixes
+$grey1: mix($light, $dark, 20%);
+$grey2: mix($light, $dark, 40%);
+$grey3: mix($light, $dark, 60%);
+$grey4: mix($light, $dark, 80%);
+
+$p_dark4: mix($dark, $primary, 80%);
+$p_dark3: mix($dark, $primary, 60%);
+$p_dark2: mix($dark, $primary, 40%);
+$p_dark1: mix($dark, $primary, 20%);
+$p_fade1: mix($light, $primary, 20%);
+$p_fade2: mix($light, $primary, 40%);
+$p_fade3: mix($light, $primary, 60%);
+$p_fade4: mix($light, $primary, 80%);
+
+$header-height: 60px;
+site-header {
+	display: block;
+	height: $header-height;
+	border-bottom: 2px solid $p_dark1;
+	background-color: $primary;
+	color: $light;
+	ul {
+		list-style: none;
+		height: $header-height;
+		margin: 0;
+		padding: 0;
+	}
+	ul:after {
+		content: " ";
+		display: block;
+		clear: both;
+	}
+	li {
+		display: inline-block;
+		height: $header-height;
+		line-height: $header-height;
+		padding: 0 0px;
+		box-sizing: border-box;
+		width: 20%;
+		float: left;
+		text-align: center;
+		font-weight: bold;
+		font-family: monospace;
+	}
+}
