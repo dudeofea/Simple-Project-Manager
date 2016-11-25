@@ -1,6 +1,6 @@
 import { NgModule }      from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { AppComponent }   from './app.component';
+import { AppComponent, HeaderComponent }   from './app.component';
 
 import { Routes, RouterModule } from '@angular/router';
 import { DevsComponent } from './devs.component';
@@ -16,7 +16,8 @@ const routes: Routes = [
   ],
   declarations: [
 	  AppComponent,
-	  DevsComponent
+	  DevsComponent,
+	  HeaderComponent
   ],
   bootstrap:    [ AppComponent ]
 })

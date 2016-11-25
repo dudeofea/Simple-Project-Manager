@@ -12,7 +12,7 @@
   </head>
   <base href="/">
   <body>
-	<site-header></site-header>
+	<app></app>
     <script src="<%= static_path(@conn, "/js/app.js") %>"></script>
   </body>
 </html>
