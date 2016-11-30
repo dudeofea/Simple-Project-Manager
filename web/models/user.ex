@@ -1,8 +1,9 @@
 defmodule TicketSystem.User do
   use TicketSystem.Web, :model
 
+  @derive {Poison.Encoder, only: [:email]}
   schema "users" do
-    field :username, :string
+    field :email, :string
     field :encrypted_password, :string
 	field :password, :string, virtual: true
 	field :password_confirmation, :string, virtual: true
@@ -10,7 +11,7 @@ defmodule TicketSystem.User do
     timestamps()
   end
 
-  @required_fields ~w(username password password_confirmation)
+  @required_fields ~w(email)
   @optional_fields ~w()
 
   @doc """

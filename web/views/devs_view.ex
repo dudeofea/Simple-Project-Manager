@@ -1,6 +1,5 @@
 defmodule TicketSystem.DevelopersView do
 	use TicketSystem.Web, :view
-	require IEx
 
 	#returns the result of a get
 	def render("get.json", %{rows: rows}) do
