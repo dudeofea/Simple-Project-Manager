@@ -25,7 +25,12 @@ defmodule TicketSystem.Router do
 		get "/clients", PageController, :index
 	end
 
-	#TODO: add api scope for angular static site to use
+	#api scope for angular static site to use
+	scope "/api", TicketSystem do
+		pipe_through :api
+
+		resources "/developers", DevelopersController
+	end
 
 	#git remote scope
 	scope "/git", TicketSystem do
@@ -34,9 +39,4 @@ defmodule TicketSystem.Router do
 		post "/git-receive-pack", GitController, :post_receive_pack
 		get "/*path", GitController, :index
 	end
-
-  # Other scopes may use custom stacks.
-  # scope "/api", TicketSystem do
-  #   pipe_through :api
-  # end
 end

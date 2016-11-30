@@ -6,6 +6,7 @@ import { Routes, RouterModule } from '@angular/router';
 import { DevsComponent } from './devs.component';
 
 const routes: Routes = [
+	{path: '**', redirectTo: '/developers', pathMatch: 'full'},
 	{path: 'developers', component: DevsComponent}
 ];
 
