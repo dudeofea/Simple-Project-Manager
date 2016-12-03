@@ -1,1 +1,7 @@
-<p>hey</p>
+<p>Developers</p>
+<ul>
+	<li *ngFor="let d of devs">
+		{{d.email}}
+	</li>
+</ul>
+<button (click)="add_edit()">Create</button>
