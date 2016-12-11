@@ -1,7 +1,22 @@
-<p>Developers</p>
-<ul>
-	<li *ngFor="let d of devs">
-		{{d.email}}
-	</li>
-</ul>
-<button (click)="add_edit()">Create</button>
+<h2 class="title">Developers</h2>
+<div class="btn add-edit-button" (click)="add_edit()">Add</div>
+<table class="table table-striped">
+	<thead>
+		<tr>
+			<td>Id</td>
+			<td>Email</td>
+		</tr>
+	</thead>
+	<tbody>
+		<tr *ngFor="let d of devs">
+			<td>{{d.id}}</td>
+			<td>{{d.email}}</td>
+		</tr>
+	</tbody>
+</table>
+<!-- //TODO: add close button / close when click overlay to modal -->
+<div class="modal" [class.show]="editing">
+	<h4>Create a new Developer</h4>
+	<input type="text" class="form-input" placeholder="Email" [value]="email"/>
+	<div class="btn" (click)="submit()">Create</div>
+</div>

@@ -22,7 +22,6 @@ defmodule TicketSystem.DevelopersView do
 		end)
 		%{errors: errors}
 	end
-
 	def render_detail({message, values}) do
 		Enum.reduce values, message, fn {k, v}, acc ->
 			String.replace(acc, "%{#{k}}", to_string(v))

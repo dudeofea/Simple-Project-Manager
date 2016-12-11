@@ -10,6 +10,7 @@ import { HTTP_PROVIDERS, Http } from '@angular/http';
 export class DevsComponent {
 	devs: Object[];
 	http: Http;
+	editing = false;
 	constructor(private http_client: Http){
 		this.http = http_client;
 		this.refresh();
@@ -20,8 +21,15 @@ export class DevsComponent {
 		});
 	}
 	add_edit(){
-		this.http.post('api/developers', {email: "a new email"}).subscribe(res => {
-			this.refresh();
-		});
+		this.editing = true;
+		this.email = "hey hey";
+		//TODO: create a new changeset either based on exising dev
+		//TODO: or create a new cs based on /schema/developers endpoint
+	}
+	submit(){
+		//TODO: submit the dev changeset
+		// this.http.post('api/developers', {email: "a new email"}).subscribe(res => {
+		// 	this.refresh();
+		// });
 	}
 }
