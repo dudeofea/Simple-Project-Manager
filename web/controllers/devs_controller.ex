@@ -22,4 +22,11 @@ defmodule TicketSystem.DevelopersController do
 	#TODO: update something other than the name of a dev
 
 	#TODO: delete a dev
+
+	#TODO: return the data types of all model fields
+	# but don't include types that aren't JSON encoded
+	def schema(conn, _params) do
+		#OPTIONAL: possibly use some specific schema.json view
+		render conn, "get.json", rows: User.__schema__(:fields)
+	end
 end

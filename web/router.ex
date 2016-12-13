@@ -26,10 +26,17 @@ defmodule TicketSystem.Router do
 	end
 
 	#api scope for angular static site to use
-	scope "/api", TicketSystem do
+	scope "/crud", TicketSystem do
 		pipe_through :api
 
 		resources "/developers", DevelopersController
+	end
+
+	#schema scope for form inputs
+	scope "/schema", TicketSystem do
+		pipe_through :api
+
+		get "/developers", DevelopersController, :schema
 	end
 
 	#git remote scope

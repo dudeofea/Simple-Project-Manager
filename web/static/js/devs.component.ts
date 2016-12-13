@@ -16,7 +16,7 @@ export class DevsComponent {
 		this.refresh();
 	}
 	refresh(){
-		this.http.get('api/developers').subscribe(res => {
+		this.http.get('crud/developers').subscribe(res => {
 			this.devs = res.json();
 		});
 	}
