@@ -14,11 +14,11 @@ defmodule TicketSystem.DevelopersView do
 	#return an error message
 	def render("error.json", %{changeset: changeset}) do
 		errors = Enum.map(changeset.errors, fn {field, detail} ->
-		%{
-			source: %{ pointer: "/data/attributes/#{field}" },
-			title: "Invalid Attribute",
-			detail: render_detail(detail)
-		}
+			%{
+				source: %{ pointer: "/data/attributes/#{field}" },
+				title: "Invalid Attribute",
+				detail: render_detail(detail)
+			}
 		end)
 		%{errors: errors}
 	end
@@ -29,5 +29,25 @@ defmodule TicketSystem.DevelopersView do
 	end
 	def render_detail(message) do
 		message
+	end
+
+	#show a model's JSON schema / data types
+	def render("schema.json", %{model: model}) do
+		fields = Enum.map(model.__schema__(:fields), fn field ->
+			%{
+				name: field,
+				type: schema_type(model.__schema__(:type, field))
+			}
+		end)
+		%{
+			primary_keys: model.__schema__(:primary_key),
+			fields: fields
+		}
+	end
+	def schema_type(Elixir.Ecto.DateTime) do
+		"datetime"
+	end
+	def schema_type(type) do
+		type
 	end
 end
