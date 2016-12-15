@@ -11,6 +11,7 @@ export class DevsComponent {
 	devs: Object[];
 	http: Http;
 	editing = false;
+	public form = {};
 	constructor(private http_client: Http){
 		this.http = http_client;
 		this.refresh();
@@ -21,15 +22,21 @@ export class DevsComponent {
 		});
 	}
 	add_edit(){
-		this.editing = true;
-		this.email = "hey hey";
+		this.http.get('schema/developers').subscribe(res => {
+			this.editing = true;
+			this.form = res.json().blank_form;
+		});
 		//TODO: create a new changeset either based on exising dev
 		//TODO: or create a new cs based on /schema/developers endpoint
 	}
 	submit(){
-		//TODO: submit the dev changeset
-		// this.http.post('api/developers', {email: "a new email"}).subscribe(res => {
-		// 	this.refresh();
-		// });
+		//submit the dev changeset
+		this.http.post('crud/developers', this.form).subscribe(res => {
+			this.refresh();
+			this.close();
+		});
+	}
+	close(){
+		this.editing = false;
 	}
 }

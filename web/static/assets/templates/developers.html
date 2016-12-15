@@ -15,8 +15,12 @@
 	</tbody>
 </table>
 <!-- //TODO: add close button / close when click overlay to modal -->
-<div class="modal" [class.show]="editing">
-	<h4>Create a new Developer</h4>
-	<input type="text" class="form-input" placeholder="Email" [value]="email"/>
-	<div class="btn" (click)="submit()">Create</div>
+<div class="modal-wrapper" [class.show]="editing">
+	<div class="back" (click)="close()"></div>
+	<div class="modal">
+		<span class="close" (click)="close()">X</span>
+		<h4>Create a new Developer</h4>
+		<input type="text" class="form-input" placeholder="Email" [(ngModel)]="form.email"/>
+		<div class="btn" (click)="submit()">Create</div>
+	</div>
 </div>

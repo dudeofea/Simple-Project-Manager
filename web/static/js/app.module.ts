@@ -4,6 +4,7 @@ import { AppComponent, HeaderComponent }   from './app.component';
 import { HttpModule } from '@angular/http';
 import { Routes, RouterModule } from '@angular/router';
 import { DevsComponent } from './devs.component';
+import { FormsModule } from '@angular/forms';
 
 const routes: Routes = [
 	{path: '**', redirectTo: '/developers', pathMatch: 'full'},
@@ -14,7 +15,8 @@ const routes: Routes = [
   imports: [
 	  BrowserModule,
 	  RouterModule.forRoot(routes),
-	  HttpModule
+	  HttpModule,
+	  FormsModule
   ],
   declarations: [
 	  AppComponent,

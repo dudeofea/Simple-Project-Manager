@@ -21,6 +21,7 @@ import "phoenix_html"
 // import socket from "./socket"
 
 //load (Typescript) angular app from here
+import "rxjs"
 import 'zone.js';
 import 'reflect-metadata';
 import "./main.ts"

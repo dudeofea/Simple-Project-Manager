@@ -41,7 +41,8 @@ defmodule TicketSystem.DevelopersView do
 		end)
 		%{
 			primary_keys: model.__schema__(:primary_key),
-			fields: fields
+			fields: fields,
+			blank_form: model.__struct__
 		}
 	end
 	def schema_type(Elixir.Ecto.DateTime) do
