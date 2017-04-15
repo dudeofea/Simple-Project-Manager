@@ -1,7 +1,7 @@
 Next Steps:
 - Add user management
 	- Add an admin user / pass (no public registration)
-	- Add a user management page (add / view / edit / delete)
+	- On user management page, edit / delete
 	- When selecting a user, add thumb under Users header to indicate that results on other pages will be filtered for that user
 - Add ticket management (under projects)
 	- Time estimates for tickets (static upon creation)

@@ -53,6 +53,9 @@ defmodule TicketSystem.Web do
       import TicketSystem.Router.Helpers
       import TicketSystem.ErrorHelpers
       import TicketSystem.Gettext
+
+	  #global JSON views
+	  import TicketSystem.JSONViews
     end
   end
 
