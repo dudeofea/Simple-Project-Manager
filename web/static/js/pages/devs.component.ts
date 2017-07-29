@@ -1,10 +1,12 @@
 import { Component } from '@angular/core';
 import { NgFor } from '@angular/common';
-import { HTTP_PROVIDERS, Http } from '@angular/http';
+import { Http } from '@angular/http';
+
+let page_name = "developers";
 
 @Component({
-	selector: 'developers',
-	templateUrl: 'templates/developers.html'
+	selector: page_name,
+	templateUrl: 'templates/'+page_name+'.html'
 })
 
 export class DevsComponent {
@@ -17,12 +19,12 @@ export class DevsComponent {
 		this.refresh();
 	}
 	refresh(){
-		this.http.get('crud/developers').subscribe(res => {
+		this.http.get('crud/'+page_name).subscribe(res => {
 			this.devs = res.json();
 		});
 	}
 	add_edit(){
-		this.http.get('schema/developers').subscribe(res => {
+		this.http.get('schema/'+page_name).subscribe(res => {
 			this.editing = true;
 			this.form = res.json().blank_form;
 		});
@@ -31,7 +33,7 @@ export class DevsComponent {
 	}
 	submit(){
 		//submit the dev changeset
-		this.http.post('crud/developers', this.form).subscribe(res => {
+		this.http.post('crud/'+page_name, this.form).subscribe(res => {
 			this.refresh();
 			this.close();
 		});

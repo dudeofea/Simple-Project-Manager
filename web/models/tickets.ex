@@ -1,6 +1,7 @@
 defmodule TicketSystem.Ticket do
   use TicketSystem.Web, :model
 
+  @derive {Poison.Encoder, only: [:id, :name, :description, :uncertainty, :size, :difficulty, :planning, :inserted_at, :updated_at]}
   schema "tickets" do
 	field :name, :string
 	field :description, :string

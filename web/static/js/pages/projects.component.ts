@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { NgFor } from '@angular/common';
-import { HTTP_PROVIDERS, Http } from '@angular/http';
+import { Http } from '@angular/http';
 
 let page_name = "projects";
 

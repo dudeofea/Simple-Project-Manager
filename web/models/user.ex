@@ -1,7 +1,7 @@
 defmodule TicketSystem.User do
   use TicketSystem.Web, :model
 
-  @derive {Poison.Encoder, only: [:email, :id]}
+  @derive {Poison.Encoder, only: [:email, :id, :inserted_at, :updated_at]}
   schema "users" do
     field :email, :string
     field :encrypted_password, :string

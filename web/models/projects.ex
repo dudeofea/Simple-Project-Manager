@@ -1,6 +1,7 @@
 defmodule TicketSystem.Project do
   use TicketSystem.Web, :model
 
+  @derive {Poison.Encoder, only: [:id, :name, :inserted_at, :updated_at]}
   schema "projects" do
 	field :name, :string
 

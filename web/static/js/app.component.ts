@@ -7,7 +7,6 @@ import { Component } from '@angular/core';
 export class HeaderComponent { }
 
 @Component({
-	directives: [HeaderComponent],
 	selector: 'app',
 	template: `
 		<site-header></site-header>

@@ -5,7 +5,7 @@ defmodule TicketSystem.TicketsController do
 
 	#get all developers
 	def index(conn, _params) do
-		rows = Repo.all(Ticket)
+		rows = Ticket |> Repo.all() |> Repo.preload(:group)
 		render conn, "get.json", rows: rows
 	end
 
