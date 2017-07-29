@@ -21,14 +21,13 @@ Next Steps:
 	- Example: A Phoenix web server recipe that takes in a Postgres db to connect to
 	- Possibly show all servers / server interconnections in nice d3 graph
 	- Also see if you can make Ancible recipes that let you run on existing servers so you can save money instead of spinning up new droplets
-- Setup docker image to contain both webserver / sshd / repos
-	- Possibly just setup a docker git server with linux users (https://hub.docker.com/r/unixtastic/git-ssh-server/)
-	- Another docker ssh example: https://docs.docker.com/engine/examples/running_ssh_service/
-	- Add a linux users with same name as user in db when created
-	- Store (bare) git repos on docker image, these are the remote repos
-	- Each project is a linux user/group, each project folder is owned by that user/group
-	- When adding users to a project, we add them to that project's group, giving them access (via ssh) to the folder
-	- Make custom git-shell for tracking ticket checkouts / checkout permissions. Only one user can work on a ticket at a time
+- Add git server / ticket based authorization
+	- Only one person can work on a ticket at the same time
+	- A ticket is marked done when it is merged into the dev branch via the web GUI
+	- To work on a ticket, you have to check it out in the web GUI, which will give your account permission to pull the ticket-<ticket no> branch
+	- You can work on multiple tickets at once, to stop working on one push your changes and check in your branch via the web GUI
+	- Not sure if every commit needs to be on a ticket...need to think about that
+	- use gitolite: https://git-scm.com/book/en/v1/Git-on-the-Server-Gitolite
 
 How to charge clients:
 - New tickets cost money, they cost a fixed amount based on a time estimate of the developer and their code speed(s)
@@ -36,4 +35,4 @@ How to charge clients:
 - If a feature outlined in an old ticket stops working (regression), it will be fixed for free
 - If the client wants the software to do something that is not outlined in any existing tickets (even if it's a bug), that's a new ticket and so it costs money
 - Charge $20 / month for running the website (host web server on DO droplet, Postgres on another droplet, and an auto-replicate Postgres on another droplet, and keep weekly backups on bigass external drive at home)
-- Never keep any state in web server, reinstalling web server should be not much more than a git clone
+- Never keep any state in web server, reinstalling web server should be not much more than a git clone + database hookup
