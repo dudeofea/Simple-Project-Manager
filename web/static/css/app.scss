@@ -70,9 +70,6 @@ $header-height: 60px;
 site-header {
 	display: block;
 	height: $header-height;
-	border-bottom: 2px solid $p_dark1;
-	background-color: $primary;
-	color: $light;
 	ul {
 		list-style: none;
 		height: $header-height;
@@ -85,6 +82,9 @@ site-header {
 		clear: both;
 	}
 	li {
+		border-bottom: 2px solid $p_dark1;
+		background-color: $primary;
+		color: $light;
 		display: inline-block;
 		height: $header-height;
 		line-height: $header-height;
@@ -95,10 +95,36 @@ site-header {
 		text-align: center;
 		font-weight: bold;
 		font-family: monospace;
+		&.active {
+			background-color: $p_dark1;
+			border-bottom-color: $p_dark2;
+		}
 	}
 }
 
 developers {
+	display: block;
+	padding: 20px;
+	.title {
+		display: inline;
+	}
+	.add-edit-button {
+		float: right;
+	}
+}
+
+projects {
+	display: block;
+	padding: 20px;
+	.title {
+		display: inline;
+	}
+	.add-edit-button {
+		float: right;
+	}
+}
+
+tickets {
 	display: block;
 	padding: 20px;
 	.title {

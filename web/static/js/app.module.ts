@@ -4,11 +4,15 @@ import { AppComponent, HeaderComponent }   from './app.component';
 import { HttpModule } from '@angular/http';
 import { Routes, RouterModule } from '@angular/router';
 import { DevsComponent } from './devs.component';
+import { ProjectsComponent } from './projects.component';
+import { TicketsComponent } from './tickets.component';
 import { FormsModule } from '@angular/forms';
 
 const routes: Routes = [
-	{path: '**', redirectTo: '/developers', pathMatch: 'full'},
-	{path: 'developers', component: DevsComponent}
+	{path: '', redirectTo: '/developers', pathMatch: 'full'},
+	{path: 'developers', component: DevsComponent},
+	{path: 'projects', component: ProjectsComponent},
+	{path: 'tickets', component: TicketsComponent},
 ];
 
 @NgModule({
@@ -21,6 +25,8 @@ const routes: Routes = [
   declarations: [
 	  AppComponent,
 	  DevsComponent,
+	  ProjectsComponent,
+	  TicketsComponent,
 	  HeaderComponent
   ],
   bootstrap:    [ AppComponent ]

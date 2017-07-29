@@ -1,0 +1,16 @@
+<h2 class="title">Tickets</h2>
+<div class="btn add-edit-button" (click)="add_edit()">Add</div>
+<table class="table table-striped">
+	<thead>
+		<tr>
+			<td>Id</td>
+			<td>Name</td>
+		</tr>
+	</thead>
+	<tbody>
+		<tr *ngFor="let t of tickets">
+			<td>{{t.id}}</td>
+			<td>{{t.name}}</td>
+		</tr>
+	</tbody>
+</table>
