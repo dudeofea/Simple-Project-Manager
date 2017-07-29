@@ -4,12 +4,10 @@ defmodule TicketSystem.JSONViews do
 	def json("get.json", %{rows: rows}) do
 		rows
 	end
-
 	#returns the result of an insert
 	def json("insert.json", _assigns) do
 		[]
 	end
-
 	#return an error message
 	def json("error.json", %{changeset: changeset}) do
 		errors = Enum.map(changeset.errors, fn {field, detail} ->
@@ -21,15 +19,6 @@ defmodule TicketSystem.JSONViews do
 		end)
 		%{errors: errors}
 	end
-	def json_detail({message, values}) do
-		Enum.reduce values, message, fn {k, v}, acc ->
-			String.replace(acc, "%{#{k}}", to_string(v))
-		end
-	end
-	def json_detail(message) do
-		message
-	end
-
 	#show a model's JSON schema / data types
 	def json("schema.json", %{model: model}) do
 		fields = Enum.map(model.__schema__(:fields), fn field ->
@@ -44,10 +33,22 @@ defmodule TicketSystem.JSONViews do
 			blank_form: model.__struct__
 		}
 	end
-	def schema_type(Elixir.Ecto.DateTime) do
-		"datetime"
-	end
+
 	def schema_type(type) do
-		type
+		case type do
+			t when t == Elixir.Ecto.DateTime or t == :naive_datetime ->
+				"datetime"
+			_ ->
+				type
+		end
+	end
+
+	def json_detail({message, values}) do
+		Enum.reduce values, message, fn {k, v}, acc ->
+			String.replace(acc, "%{#{k}}", to_string(v))
+		end
+	end
+	def json_detail(message) do
+		message
 	end
 end

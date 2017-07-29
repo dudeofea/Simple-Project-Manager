@@ -3,7 +3,7 @@ defmodule TicketSystem.Repo.Migrations.CreateUser do
 
   def change do
     create table(:users) do
-      add :username, :string
+	  add :email, :string
       add :encrypted_password, :string
 
       timestamps()

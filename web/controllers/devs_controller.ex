@@ -17,7 +17,6 @@ defmodule TicketSystem.DevelopersController do
 			render conn, "error.json", changeset: changeset
 		end
 	end
-	#TODO: - Add a linux user account with same name
 
 	#TODO: update something other than the name of a dev
 
