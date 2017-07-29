@@ -30,6 +30,8 @@ defmodule TicketSystem.Router do
 		pipe_through :api
 
 		resources "/developers", DevelopersController
+		resources "/projects", ProjectsController
+		resources "/tickets", TicketsController
 	end
 
 	#schema scope for form inputs
@@ -37,13 +39,15 @@ defmodule TicketSystem.Router do
 		pipe_through :api
 
 		get "/developers", DevelopersController, :schema
+		get "/projects", ProjectsController, :schema
+		get "/tickets", TicketsController, :schema
 	end
 
-	#git remote scope
-	scope "/git", TicketSystem do
-		get "/info/refs", GitController, :info_refs
-		post "/git-upload-pack", GitController, :post_upload_pack
-		post "/git-receive-pack", GitController, :post_receive_pack
-		get "/*path", GitController, :index
-	end
+	# #git remote scope
+	# scope "/git", TicketSystem do
+	# 	get "/info/refs", GitController, :info_refs
+	# 	post "/git-upload-pack", GitController, :post_upload_pack
+	# 	post "/git-receive-pack", GitController, :post_receive_pack
+	# 	get "/*path", GitController, :index
+	# end
 end

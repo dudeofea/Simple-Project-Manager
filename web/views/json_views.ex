@@ -1,4 +1,9 @@
-defmodule TicketSystem.JSONViews do
+defmodule TicketSystem.JSONView do
+	use TicketSystem.Web, :view
+
+	def render(page, args) do
+		json(page, args)
+	end
 
 	#returns the result of a get
 	def json("get.json", %{rows: rows}) do

@@ -1,20 +1,20 @@
-defmodule TicketSystem.DevelopersController do
+defmodule TicketSystem.ProjectsController do
 	use TicketSystem.Web, :controller
 
 	plug :put_view, TicketSystem.JSONView
 
 	#get all developers
 	def index(conn, _params) do
-		users = Repo.all(User)
-		render conn, "get.json", rows: users
+		rows = Repo.all(Project)
+		render conn, "get.json", rows: rows
 	end
 
 	#create a new dev
-	def create(conn, new_user) do
-		changeset = User.changeset(%User{}, new_user)
+	def create(conn, new_obj) do
+		changeset = Project.changeset(%Project{}, new_obj)
 		case Repo.insert(changeset) do
-		{:ok, user} ->
-			render conn, "insert.json", id: user
+		{:ok, obj} ->
+			render conn, "insert.json", id: obj
 		{:error, changeset} ->
 			render conn, "error.json", changeset: changeset
 		end
@@ -26,6 +26,6 @@ defmodule TicketSystem.DevelopersController do
 
 	#return the data types of all model fields
 	def schema(conn, _params) do
-		render conn, "schema.json", model: User
+		render conn, "schema.json", model: Project
 	end
 end

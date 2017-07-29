@@ -9,6 +9,7 @@ defmodule TicketSystem.Repo.Migrations.CreateTickets do
 		add :size, :float
 		add :difficulty, :float
 		add :planning, :float
+		add :group_id, :integer
 
 		timestamps()
     end

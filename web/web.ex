@@ -32,6 +32,9 @@ defmodule TicketSystem.Web do
 
       alias TicketSystem.Repo
 	  alias TicketSystem.User
+	  alias TicketSystem.Project
+	  alias TicketSystem.Ticket
+	  alias TicketSystem.TicketGroup
       import Ecto
       import Ecto.Query
 
@@ -53,9 +56,6 @@ defmodule TicketSystem.Web do
       import TicketSystem.Router.Helpers
       import TicketSystem.ErrorHelpers
       import TicketSystem.Gettext
-
-	  #global JSON views
-	  import TicketSystem.JSONViews
     end
   end
 

@@ -1,9 +1,10 @@
-defmodule TicketSystem.Projects do
+defmodule TicketSystem.Project do
   use TicketSystem.Web, :model
 
   schema "projects" do
+	field :name, :string
 
-    timestamps()
+	timestamps()
   end
 
   @doc """

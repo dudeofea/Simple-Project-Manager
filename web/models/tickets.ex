@@ -1,4 +1,4 @@
-defmodule TicketSystem.Tickets do
+defmodule TicketSystem.Ticket do
   use TicketSystem.Web, :model
 
   schema "tickets" do
@@ -23,7 +23,7 @@ defmodule TicketSystem.Tickets do
   end
 end
 
-defmodule TicketSystem.TicketGroups do
+defmodule TicketSystem.TicketGroup do
   use TicketSystem.Web, :model
 
   schema "ticket_groups" do
