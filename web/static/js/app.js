@@ -20,8 +20,19 @@ import "phoenix_html"
 
 // import socket from "./socket"
 
-//load (Typescript) angular app from here
-import "rxjs"
-import 'zone.js';
-import 'reflect-metadata';
-import "./main.ts"
+//start Vue.js app
+import App from './app.vue'
+import DevsComponent from './developers.vue'
+
+let router = new VueRouter({
+	mode: 'history',
+	routes: [
+		{ path: '*', redirect: '/developers' },
+		{ path: '/developers', component: DevsComponent }
+	],
+})
+
+const app = new Vue({
+  router,
+  render: h => h(App)
+}).$mount('#main')

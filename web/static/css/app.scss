@@ -67,7 +67,7 @@ $p_fade4: mix($light, $primary, 80%);
 
 //pages
 $header-height: 60px;
-site-header {
+.site-header {
 	display: block;
 	height: $header-height;
 	ul {
@@ -102,29 +102,7 @@ site-header {
 	}
 }
 
-developers {
-	display: block;
-	padding: 20px;
-	.title {
-		display: inline;
-	}
-	.add-edit-button {
-		float: right;
-	}
-}
-
-projects {
-	display: block;
-	padding: 20px;
-	.title {
-		display: inline;
-	}
-	.add-edit-button {
-		float: right;
-	}
-}
-
-tickets {
+.developers, .projects, .tickets {
 	display: block;
 	padding: 20px;
 	.title {
