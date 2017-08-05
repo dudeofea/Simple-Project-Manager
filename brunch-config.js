@@ -67,7 +67,8 @@ exports.config = {
     enabled: true,
 	globals: {
 		Vue: 'vue/dist/vue.common.js',
-		VueRouter: 'vue-router/dist/vue-router.common.js'
+		VueRouter: 'vue-router/dist/vue-router.common.js',
+		axios: 'axios'
 	}
   }
 };

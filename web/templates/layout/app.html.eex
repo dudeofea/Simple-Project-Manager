@@ -9,12 +9,11 @@
 
     <title>Simple Project Manager</title>
     <link rel="stylesheet" href="<%= static_path(@conn, "/css/app.css") %>">
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:400,300">
+	<script defer src="<%= static_path(@conn, "/js/app.js") %>"></script>
   </head>
   <base href="/">
   <body>
-	<div id="main">
-		<app></app>
-	</div>
-	<script src="<%= static_path(@conn, "/js/app.js") %>"></script>
+	<div id="main"></div>
   </body>
 </html>

@@ -23,12 +23,20 @@ import "phoenix_html"
 //start Vue.js app
 import App from './app.vue'
 import DevsComponent from './developers.vue'
+import ProjectsComponent from './projects.vue'
+import TicketsComponent from './tickets.vue'
+import ServersComponent from './servers.vue'
+import ClientsComponent from './clients.vue'
 
 let router = new VueRouter({
 	mode: 'history',
 	routes: [
 		{ path: '*', redirect: '/developers' },
-		{ path: '/developers', component: DevsComponent }
+		{ path: '/developers', component: DevsComponent },
+		{ path: '/projects', component: ProjectsComponent },
+		{ path: '/tickets', component: TicketsComponent },
+		{ path: '/servers', component: ServersComponent },
+		{ path: '/clients', component: ClientsComponent }
 	],
 })
 

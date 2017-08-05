@@ -1,24 +1,24 @@
 <template>
 <div class="developers">
-	<h2 class="title">Developers</h2>
+	<h2 class="title">Clients</h2>
 	<div class="btn add-edit-button" v-on:click="hub.$emit('modal-open')">Add</div>
 	<table class="table table-striped">
 		<thead>
 			<tr>
 				<td>Id</td>
-				<td>Email</td>
+				<td>Name</td>
 			</tr>
 		</thead>
 		<tbody>
-			<tr v-for="d in devs">
-				<td>{{d.id}}</td>
-				<td>{{d.email}}</td>
+			<tr v-for="c in clients">
+				<td>{{c.id}}</td>
+				<td>{{c.name}}</td>
 			</tr>
 		</tbody>
 	</table>
 	<create-modal
 		v-bind:hub="hub"
-		title="Developer"
+		title="Client"
 		v-bind:table="page_name">
 	</create-modal>
 </div>
@@ -30,7 +30,7 @@ import logger from './logger.js'
 
 export default {
 	data: () => ({
-		page_name: "developers",
+		page_name: "clients",
 		devs: [],
 		error: null,
 		hub: new Vue()

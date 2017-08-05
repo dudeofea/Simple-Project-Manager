@@ -70,18 +70,13 @@ $header-height: 60px;
 .site-header {
 	display: block;
 	height: $header-height;
-	ul {
-		list-style: none;
-		height: $header-height;
-		margin: 0;
-		padding: 0;
-	}
-	ul:after {
+	&:after {
 		content: " ";
 		display: block;
 		clear: both;
 	}
-	li {
+	a {
+		text-decoration: none;
 		border-bottom: 2px solid $p_dark1;
 		background-color: $primary;
 		color: $light;
@@ -95,7 +90,7 @@ $header-height: 60px;
 		text-align: center;
 		font-weight: bold;
 		font-family: monospace;
-		&.active {
+		&.router-link-active {
 			background-color: $p_dark1;
 			border-bottom-color: $p_dark2;
 		}

@@ -1,12 +1,10 @@
 <template>
 <div class="site-header">
-	<ul>
-		<li routerLink="/developers" routerLinkActive="active">Developers</li>
-		<li routerLink="/projects" routerLinkActive="active">Projects</li>
-		<li routerLink="/tickets" routerLinkActive="active">Tickets</li>
-		<li>Servers</li>
-		<li>Clients</li>
-	</ul>
+	<router-link to="/developers">Developers</router-link>
+	<router-link to="/projects">Projects</router-link>
+	<router-link to="/tickets">Tickets</router-link>
+	<router-link to="/servers">Servers</router-link>
+	<router-link to="/clients">Clients</router-link>
 </div>
 </template>
 
