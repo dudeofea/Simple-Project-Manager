@@ -1,7 +1,9 @@
 defmodule TicketSystem.PageController do
-  use TicketSystem.Web, :controller
+	use TicketSystem.Web, :controller
 
-  def index(conn, _params) do
-    render conn, "index.html"
-  end
+	#get the requested section
+	def get(conn, params) do
+		path = params["path"] |> Enum.join("/")
+		render conn, "app.html"
+	end
 end

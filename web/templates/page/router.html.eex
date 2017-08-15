@@ -1,0 +1,3 @@
+<div class="router-section" data-path="<%= @router_path %>" data-default="<%= @default_route %>">
+	<%= render(@router_path <> ".html") %>
+</div>

@@ -48,9 +48,10 @@ exports.config = {
 
   // Configure your plugins
   plugins: {
-    babel: {
-      // Do not use ES6 compiler in vendor code
-      ignore: [/web\/static\/vendor/]
+	  copycat:{
+      "js" : ["web/static/js", "priv/static/js"],
+      verbose : true, //shows each file that is copied to the destination directory
+      onlyChanged: true //only copy a file if it's modified time has changed (only effective when using brunch watch)
   	},
 	sass: {
 		mode: 'native'
@@ -64,11 +65,6 @@ exports.config = {
   },
 
   npm: {
-    enabled: true,
-	globals: {
-		Vue: 'vue/dist/vue.common.js',
-		VueRouter: 'vue-router/dist/vue-router.common.js',
-		axios: 'axios'
-	}
+    enabled: true
   }
 };
