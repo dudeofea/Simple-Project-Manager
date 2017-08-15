@@ -3,7 +3,9 @@
   "license": "MIT",
   "scripts": {
     "deploy": "brunch build --production",
-    "watch": "brunch watch --stdin"
+    "watch": "brunch watch --stdin",
+    "test": "mocha test/js --reporter dot",
+	"test-watch": "mocha test/js --reporter dot --watch"
   },
   "dependencies": {
     "copycat-brunch": "^1.1.0",
@@ -16,6 +18,9 @@
   "devDependencies": {
     "brunch": "2.7.4",
     "clean-css-brunch": "~2.0.0",
+    "mocha": "^3.5.0",
+    "mock-browser": "^0.92.14",
+    "rewire": "^2.5.2",
     "uglify-js-brunch": "~2.0.1"
   }
 }
