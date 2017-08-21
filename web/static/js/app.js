@@ -57,8 +57,8 @@ window.onpopstate = function(e){
 //load a given path without reloading (in-page)
 function load_path(path, st, callback){
 	_load_path(path, st, false, function(subsection, st_i){
-		console.log("all done", subsection, st, st_i);
-		st[st_i].elem.innerHTML = subsection.elem.innerHTML;
+		st[st_i].elem.parentNode.replaceChild(subsection.elem, st[st_i].elem);
+		st[st_i].elem = subsection.elem;
 		st[st_i].children = subsection.children;
 		pushToHistory("A Title", path);
 		callback();
@@ -71,22 +71,21 @@ function _load_path(path, s_node, shadow, callback){
 	split = split.filter(function(s){
 		return s.length > 0;
 	});
-	console.log("requesting", split[0])
 	httpGET("/sections/" + split[0], function(resp){
 		//make shadow element
-		var section = document.createElement("div");
+		var section = document.createElement("router-section");
 		section.innerHTML = resp;
 		//load path again, one level deeper
 		split.splice(0, 1);
 		var new_path = split.join("/");
-		console.log("new path", new_path, resp);
+		//console.log("new path", new_path, resp);
 		if(new_path.length > 0){
 			//rebuild router-section tree
 			var children = build_section_tree(section.getElementsByTagName("router-section"));
-			console.log("going down", new_path, children[0]);
+			//console.log("going down", new_path, children[0]);
 			_load_path(new_path, children[0], true, function(subsection){
 				children[0].elem.innerHTML = subsection.elem.innerHTML;
-				console.log("going up", new_path, children);
+				//console.log("going up", new_path, children);
 				callback({
 					elem: section,
 					children: children
