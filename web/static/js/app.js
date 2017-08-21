@@ -31,10 +31,11 @@ function link_click(e){
 function httpGET(theUrl, callback, error){
     var xmlHttp = new XMLHttpRequest();
     xmlHttp.onreadystatechange = function() {
-        if (xmlHttp.readyState == 4 && xmlHttp.status == 200)
-            callback(xmlHttp.responseText);
-		else
-			error(xmlHttp);
+		if(xmlHttp.readyState == 4)
+	        if (xmlHttp.status == 200)
+	            callback(xmlHttp.responseText);
+			else
+				error(xmlHttp);
     }
     xmlHttp.open("GET", theUrl, true); // true for asynchronous
     xmlHttp.send(null);
@@ -61,7 +62,8 @@ function load_path(path, st, callback){
 		st[st_i].elem = subsection.elem;
 		st[st_i].children = subsection.children;
 		pushToHistory("A Title", path);
-		callback();
+		if(callback)
+			callback();
 	});
 }
 function _load_path(path, s_node, shadow, callback){
