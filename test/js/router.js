@@ -8,6 +8,13 @@ document.__ENV__ = "testing",
 window = jsdom.getWindow();
 router = rewire("../../web/static/js/app.js");
 
+assert.htmlEqual = function(htmlA, htmlB){
+	assert.equal(
+		htmlA.replace(/=\'(.*)\'/, "=\"$1\"").replace(/[\n\t]/g, "").replace(/\>\s+\</g, ""),
+		htmlB.replace(/=\'(.*)\'/, "=\"$1\"").replace(/[\n\t]/g, "").replace(/\>\s+\</g, "")
+	);
+};
+
 describe('Tent Router', function() {
 	var build_section_tree = router.__get__("build_section_tree");
 	var load_path = router.__get__("load_path");
@@ -135,9 +142,9 @@ describe('Tent Router', function() {
 			<p>not cats</p>
 		</router-section>`;
 		var ans = `
-		<router-section>
+		<router-section data-path="cats">
 			<p>cats</p>
-			<router-section>
+			<router-section data-path="snookum">
 				<p>Snookum</p>
 			</router-section>
 		</router-section>`;
@@ -148,9 +155,9 @@ describe('Tent Router', function() {
 			"/sections/snookum": "<p>Snookum</p>"
 		};
 		load_path("/cats/snookum", st, function(){
-			assert.equal(st[0].elem.innerHTML, "<p>cats</p><router-section><p>Snookum</p></router-section>");
-			assert.equal(st[0].children[0].elem.innerHTML, "<p>Snookum</p>");
-			assert.equal(document.body.innerHTML.replace(/\s/g, ""), ans.replace(/\s/g, ""));
+			assert.htmlEqual(st[0].elem.innerHTML, `<p>cats</p><router-section data-path="snookum"><p>Snookum</p></router-section>`);
+			assert.htmlEqual(st[0].children[0].elem.innerHTML, "<p>Snookum</p>");
+			assert.htmlEqual(document.body.innerHTML, ans);
 			assert.equal(window_history.length, 1);
 			assert.equal(window_history[0].path, "/cats/snookum");
 		});
@@ -165,7 +172,7 @@ describe('Tent Router', function() {
 			<p>also not cats</p>
 		</router-section>`;
 		var ans = `
-		<router-section>
+		<router-section data-path="cats">
 			<p>cats</p>
 		</router-section>
 		<router-section>
@@ -177,7 +184,7 @@ describe('Tent Router', function() {
 			"/sections/cats": "<p>cats</p>"
 		};
 		load_path("/cats", st, function(){
-			assert.equal(document.body.innerHTML.replace(/\s/g, ""), ans.replace(/\s/g, ""));
+			assert.htmlEqual(document.body.innerHTML, ans);
 		});
 	});
 
@@ -201,4 +208,43 @@ describe('Tent Router', function() {
 			assert.notEqual(st[0].children[0].elem.parentNode.parentNode, null);
 		});
 	});
+
+	it('Should not mess with root <router-section> DOM element', function(){
+		document.body.innerHTML = `<router-section data-hey="yo" id="myid4545" class="heyo zoinks" things="other things"></router-section>`;
+		var st = build_section_tree(document.getElementsByTagName('router-section'));
+
+		httpGETresponse = {
+			"/sections/hey": ""
+		};
+		load_path("/hey", st, function(){
+			var elem = st[0].elem;
+			assert.notEqual(elem, null);
+			assert.equal(elem.getAttribute("data-hey"), "yo");
+			assert.equal(elem.id, "myid4545");
+			assert.equal(elem.className, "heyo zoinks");
+			assert.equal(elem.getAttribute("things"), "other things");
+		});
+	});
+
+	it('Should not request the same path twice', function(){
+		document.body.innerHTML = `<router-section></router-section>`;
+		var st = build_section_tree(document.getElementsByTagName('router-section'));
+
+		httpGETresponse = {
+			"/sections/cats": "<p class='text'>cats</p>"
+		};
+		load_path("/cats", st, function(){
+			httpGETresponse = {
+				"/sections/cats": "<p class='text'>not cats</p>"
+			};
+			load_path("/cats", st, function(){
+				assert.htmlEqual(st[0].elem.innerHTML, "<p class='text'>cats</p>");
+				assert.equal(st[0].elem.getAttribute("data-path"), "cats");
+			});
+		});
+	});
+
+	//TODO: it('Should cache inactive router sections in a <router-cache> element in the body')
+	//TODO: it('Should work with single match paths'), make sure you don't test the first element to trick it
+	//TODO: it('Should work with regex matching paths')
 });

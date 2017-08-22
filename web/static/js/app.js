@@ -57,26 +57,40 @@ window.onpopstate = function(e){
 };
 //load a given path without reloading (in-page)
 function load_path(path, st, callback){
-	_load_path(path, st, false, function(subsection, st_i){
-		st[st_i].elem.parentNode.replaceChild(subsection.elem, st[st_i].elem);
-		st[st_i].elem = subsection.elem;
-		st[st_i].children = subsection.children;
-		pushToHistory("A Title", path);
+	_load_path(path, st, function(subsection, st_i){
+		if(subsection != null){
+			//copy attributes of existing DOM element
+			var attr = st[st_i].elem.attributes;
+			for (var i = 0; i < attr.length; i++) {
+				var a = attr.item(i);
+				subsection.elem.setAttribute(a.nodeName, a.nodeValue);
+			}
+			//replace element in DOM
+			st[st_i].elem.parentNode.replaceChild(subsection.elem, st[st_i].elem);
+			st[st_i].elem = subsection.elem;
+			st[st_i].children = subsection.children;
+			pushToHistory("A Title", path);
+		}
 		if(callback)
 			callback();
 	});
 }
-function _load_path(path, s_node, shadow, callback){
+function _load_path(path, st, callback){
 	//split path by slashes
 	var split = path.split("/");
 	//remove empty path components
 	split = split.filter(function(s){
 		return s.length > 0;
 	});
+	//don't load a path if it's already loaded
+	if(st[0].elem.getAttribute("data-path") == split[0]){
+		return callback();
+	}
 	httpGET("/sections/" + split[0], function(resp){
 		//make shadow element
 		var section = document.createElement("router-section");
 		section.innerHTML = resp;
+		section.setAttribute("data-path", split[0]);
 		//load path again, one level deeper
 		split.splice(0, 1);
 		var new_path = split.join("/");
@@ -85,9 +99,10 @@ function _load_path(path, s_node, shadow, callback){
 			//rebuild router-section tree
 			var children = build_section_tree(section.getElementsByTagName("router-section"));
 			//console.log("going down", new_path, children[0]);
-			_load_path(new_path, children[0], true, function(subsection){
-				children[0].elem.innerHTML = subsection.elem.innerHTML;
-				//console.log("going up", new_path, children);
+			_load_path(new_path, children, function(subsection, st_i){
+				children[st_i].elem.innerHTML = subsection.elem.innerHTML;
+				children[st_i].elem.setAttribute("data-path", new_path);
+				//console.log("done loading sub path", new_path, subsection.elem.outerHTML);
 				callback({
 					elem: section,
 					children: children
