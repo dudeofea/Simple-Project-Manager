@@ -244,6 +244,25 @@ describe('Tent Router', function() {
 		});
 	});
 
+	//noticed a bug when going from /developers to /projects and back
+	it('Should be able to switch paths', function(){
+		document.body.innerHTML = `<router-section></router-section>`;
+		var st = build_section_tree(document.getElementsByTagName('router-section'));
+
+		httpGETresponse = {
+			"/sections/cats": "<p class='text'>some cats</p>",
+			"/sections/dogs": "<p class='text'>some dogs</p>"
+		};
+		//no need to nest, should run serially
+		load_path("/cats", st);
+		load_path("/dogs", st);
+		assert.htmlEqual(st[0].elem.outerHTML, `
+			<router-section data-path="dogs">
+				<p class='text'>some dogs</p>
+			</router-section>
+		`);
+	});
+
 	//TODO: it('Should cache inactive router sections in a <router-cache> element in the body')
 	//TODO: it('Should work with single match paths'), make sure you don't test the first element to trick it
 	//TODO: it('Should work with regex matching paths')
