@@ -63,7 +63,8 @@ function load_path(path, st, callback){
 			var attr = st[st_i].elem.attributes;
 			for (var i = 0; i < attr.length; i++) {
 				var a = attr.item(i);
-				subsection.elem.setAttribute(a.nodeName, a.nodeValue);
+				if(a.nodeName != "data-path")
+					subsection.elem.setAttribute(a.nodeName, a.nodeValue);
 			}
 			//replace element in DOM
 			st[st_i].elem.parentNode.replaceChild(subsection.elem, st[st_i].elem);
