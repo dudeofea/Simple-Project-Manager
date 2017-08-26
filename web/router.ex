@@ -1,5 +1,6 @@
 defmodule TicketSystem.Router do
-  use TicketSystem.Web, :router
+	use TicketSystem.Web, :router
+	import TicketSystem.SectionPlug
 
 	#returns ready made pages
 	pipeline :browser do
@@ -8,55 +9,62 @@ defmodule TicketSystem.Router do
 		plug :fetch_flash
 		plug :protect_from_forgery
 		plug :put_secure_browser_headers
+		plug :put_view, TicketSystem.PageView
 	end
 
 	#returns page sections for single page browsing
 	pipeline :section do
-		plug :put_layout, {TicketSystem.LayoutView, :section}
+		plug :load_section
+		plug :put_view, TicketSystem.PageView
+		plug :put_layout, {TicketSystem.LayoutView, :section}	#use the section.html.eex layout instead of the default app.html.eex
 	end
 
 	#returns data for website / other
 	pipeline :api do
 		plug :accepts, ["json"]
+		plug :put_view, TicketSystem.JSONView
 	end
 
-	#page sections scope
-	scope "/sections", TicketSystem do
-		pipe_through [:browser, :section]
-
-		get "/*path", SectionController, :get
-	end
+	#list of controllers, each of these must implement functions for: get, index, create, and schema at a minimum
+	controllers = [
+		%{path: "/developers", controller: DevelopersController},
+		%{path: "/projects", controller: ProjectsController},
+		%{path: "/tickets", controller: TicketsController}
+	]
 
 	#api scope for angular static site to use
 	scope "/crud", TicketSystem do
 		pipe_through :api
 
-		resources "/developers", DevelopersController
-		resources "/projects", ProjectsController
-		resources "/tickets", TicketsController
+		for %{path: path, controller: controller} <- controllers do
+			resources path, controller
+		end
 	end
 
 	#schema scope for form inputs
 	scope "/schema", TicketSystem do
 		pipe_through :api
 
-		get "/developers", DevelopersController, :schema
-		get "/projects", ProjectsController, :schema
-		get "/tickets", TicketsController, :schema
+		for %{path: path, controller: controller} <- controllers do
+			get path, controller, :schema
+		end
+	end
+
+	#page sections scope
+	scope "/sections", TicketSystem do
+		pipe_through [:browser, :section]
+
+		for %{path: path, controller: controller} <- controllers do
+			get path, controller, :get
+		end
 	end
 
 	#web page scope
 	scope "/", TicketSystem do
 		pipe_through :browser # Use the default browser stack
 
-		get "/*path", PageController, :get
+		for %{path: path, controller: controller} <- controllers do
+			get path, controller, :get
+		end
 	end
-
-	# #git remote scope
-	# scope "/git", TicketSystem do
-	# 	get "/info/refs", GitController, :info_refs
-	# 	post "/git-upload-pack", GitController, :post_upload_pack
-	# 	post "/git-receive-pack", GitController, :post_receive_pack
-	# 	get "/*path", GitController, :index
-	# end
 end

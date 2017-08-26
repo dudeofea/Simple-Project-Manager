@@ -13,7 +13,7 @@
   </head>
   <base href="/">
   <body>
-	<%= render @view_module, @view_template, assigns %>
+  	<%= render @view_module, "app.html", assigns %>
 	<script defer src="<%= static_path(@conn, "/js/app.js") %>"></script>
   </body>
 </html>

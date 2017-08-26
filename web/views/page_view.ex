@@ -1,7 +1,7 @@
 defmodule TicketSystem.PageView do
 	use TicketSystem.Web, :view
 
-	def router(assigns, match_str \\ ".*", default_route \\ "") do
+	def router(match_str \\ ".*", default_route \\ "", assigns) do
 		#get template name
 		router_path = case assigns.conn.path_info do
 			[] -> default_route

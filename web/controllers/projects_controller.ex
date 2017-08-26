@@ -1,15 +1,19 @@
 defmodule TicketSystem.ProjectsController do
 	use TicketSystem.Web, :controller
 
-	plug :put_view, TicketSystem.JSONView
+	#get all projects
+	def get(conn, _params) do
+		rows = Repo.all(Project)
+		render conn, "projects.html", rows: rows
+	end
 
-	#get all developers
+	#get all projects
 	def index(conn, _params) do
 		rows = Repo.all(Project)
 		render conn, "get.json", rows: rows
 	end
 
-	#create a new dev
+	#create a new project
 	def create(conn, new_obj) do
 		changeset = Project.changeset(%Project{}, new_obj)
 		case Repo.insert(changeset) do
@@ -20,9 +24,9 @@ defmodule TicketSystem.ProjectsController do
 		end
 	end
 
-	#TODO: update something other than the name of a dev
+	#TODO: update something other than the name of a project
 
-	#TODO: delete a dev
+	#TODO: delete a project
 
 	#return the data types of all model fields
 	def schema(conn, _params) do

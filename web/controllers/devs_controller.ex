@@ -1,7 +1,11 @@
 defmodule TicketSystem.DevelopersController do
 	use TicketSystem.Web, :controller
 
-	plug :put_view, TicketSystem.JSONView
+	#get all developers
+	def get(conn, _params) do
+		users = Repo.all(User)
+		render conn, "developers.html", api: users
+	end
 
 	#get all developers
 	def index(conn, _params) do
