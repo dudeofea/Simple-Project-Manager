@@ -1,6 +1,7 @@
 <div class="developers">
 	<h2 class="title">Developers</h2>
 	<div class="btn add-edit-button" v-on:click="hub.$emit('modal-open')">Add</div>
+	<p><%= Poison.encode!(assigns[:api]) %></p>
 	<table class="table table-striped">
 		<thead>
 			<tr>
@@ -9,12 +10,10 @@
 			</tr>
 		</thead>
 		<tbody>
-			<%= for dev <- @api do %>
-				<tr>
-					<td><%= dev.id %></td>
-					<td><%= dev.email %></td>
-				</tr>
-			<% end %>
+			<tr v-for="d in devs">
+				<td>{{d.id}}</td>
+				<td>{{d.email}}</td>
+			</tr>
 		</tbody>
 	</table>
 	<create-modal

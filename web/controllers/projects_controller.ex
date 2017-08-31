@@ -4,7 +4,7 @@ defmodule TicketSystem.ProjectsController do
 	#get all projects
 	def get(conn, _params) do
 		rows = Repo.all(Project)
-		render conn, "projects.html", rows: rows
+		render conn, "projects.html", api: rows
 	end
 
 	#get all projects

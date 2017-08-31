@@ -1,3 +1,5 @@
-<router-section data-match="<%= @match_str %>" data-else="<%= @default_route %>">
-	<%= render @router_path <> ".html", assigns %>
+<router-section data-match="<%= @match_str %>"<%= if @router_path do %> data-path="<%= @router_path %>"<% end %>>
+	<%= if @router_path do %>
+		<%= render @router_path <> ".html", assigns %>
+	<% end %>
 </router-section>
