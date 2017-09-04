@@ -24,11 +24,16 @@ function link_click(e){
 	//set the path of our page
 	var path = e.target.getAttribute("path");
 	if(!path){ return; }
-	//if relative, add the scope path
+	//if relative, add the scope path and stick with
+	//sections_tree as root
 	if(path[0] != '/'){
 		path = getScope(e.target) + "/" + path;
+		load_path(path, sections_tree);
+	//if the path is absolute, find nearest router section
+	//to use as root instead of sections_tree
+	}else{
+		load_path(path, getSection(sections_tree, e.target));
 	}
-	load_path(path, sections_tree);
 };
 //make an async GET request
 function httpGET(theUrl, callback, error){
@@ -170,6 +175,16 @@ function getScope(elem){
 		node = node.parentNode;
 	}
 	return scope;
+}
+//get the nearest router section parent
+function getSection(st, elem){
+	for (var i = 0; i < st.length; i++) {
+		if(isDescendant(st[i].elem, elem) & st[i].children.length > 0){
+			st = st[i].children;
+			i = 0;
+		}
+	}
+	return st;
 }
 //print tree (for debugging)
 function print_tree(tree, tab_level){

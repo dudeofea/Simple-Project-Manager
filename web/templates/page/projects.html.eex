@@ -1,6 +1,6 @@
 <div class="projects">
 	<h2 class="title">Projects</h2>
-	<router-link class="btn add-edit-button" path="create">Add</router-link>
+	<router-link class="btn add-edit-button" path="/create">Add</router-link>
 	<table class="table table-striped">
 		<thead>
 			<tr>

@@ -273,7 +273,7 @@ describe('Tent Router', function() {
 		`);
 	});
 
-	it('Should load relative (nested) paths from router-link click', function(){
+	it('Should load relative nested paths from router-link click', function(){
 		document.body.innerHTML = `
 		<router-section data-path="dogs">
 			<router-link path="cats" id="nested"></router-link>
@@ -291,6 +291,29 @@ describe('Tent Router', function() {
 				<router-link path="cats" id="nested" class="selected"></router-link>
 				<router-section data-path="cats">
 					<p class='text'>this is some text</p>
+				</router-section>
+			</router-section>
+		`);
+	});
+
+	it('Should load absolute nested paths from router-link click', function(){
+		document.body.innerHTML = `
+		<router-section data-path="dogs">
+			<router-link path="/cats" id="nested"></router-link>
+			<router-section></router-section>
+		</router-section>`;
+		var st = build_section_tree(document.getElementsByTagName('router-section'));
+		router.__set__("sections_tree", st);
+
+		httpGETresponse = {
+			"/sections/cats": "<p class='text'>this is some more text</p>"
+		};
+		link_click({target: document.getElementById("nested")});
+		assert.htmlEqual(st[0].elem.outerHTML, `
+			<router-section data-path="dogs">
+				<router-link path="/cats" id="nested" class="selected"></router-link>
+				<router-section data-path="cats">
+					<p class='text'>this is some more text</p>
 				</router-section>
 			</router-section>
 		`);
