@@ -179,7 +179,7 @@ function getScope(elem){
 //get the nearest router section parent
 function getSection(st, elem){
 	for (var i = 0; i < st.length; i++) {
-		if(isDescendant(st[i].elem, elem) & st[i].children.length > 0){
+		if(isDescendant(st[i].elem, elem) && st[i].children && st[i].children.length > 0){
 			st = st[i].children;
 			i = 0;
 		}

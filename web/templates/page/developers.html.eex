@@ -1,6 +1,6 @@
 <div class="developers">
 	<h2 class="title">Developers</h2>
-	<div class="btn add-edit-button" v-on:click="hub.$emit('modal-open')">Add</div>
+	<router-link class="btn add-edit-button" path="/create">Add</router-link>
 	<table class="table table-striped">
 		<thead>
 			<tr>
@@ -17,21 +17,5 @@
 			<% end %>
 		</tbody>
 	</table>
-	<create-modal
-		v-bind:hub="hub"
-		title="Developer"
-		v-bind:table="page_name">
-	</create-modal>
-	<!-- //TODO: add close button / close when click overlay to modal -->
-	<div class="modal-wrapper" v-bind:class="{show : show}">
-		<div class="back"></div>
-		<div class="modal">
-			<span class="close" v-on:click="close()">X</span>
-			<h4>Create a new {{ title }}</h4>
-			<div v-for="f in form_fields">
-				<input type="text" class="form-input" :placeholder="f.title" v-model="form[f.property]"/>
-			</div>
-			<div class="btn" v-on:click="submit()">Create</div>
-		</div>
-	</div>
+	<%= router "create", assigns %>
 </div>
