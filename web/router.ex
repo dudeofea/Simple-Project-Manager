@@ -57,6 +57,7 @@ defmodule TicketSystem.Router do
 		for %{path: path, controller: controller} <- controllers do
 			get path, controller, :get
 		end
+		get "/*path", PageController, :get
 	end
 
 	#web page scope
@@ -66,5 +67,6 @@ defmodule TicketSystem.Router do
 		for %{path: path, controller: controller} <- controllers do
 			get path, controller, :get
 		end
+		get "/*path", PageController, :get
 	end
 end

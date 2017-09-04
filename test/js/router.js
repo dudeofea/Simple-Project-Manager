@@ -1,32 +1,42 @@
 var assert = require('assert'),
 	rewire = require('rewire'),
 	MockBrowser = require('mock-browser').mocks.MockBrowser,
-	jsdom = new MockBrowser();
+	jsdom = new MockBrowser()
+	pretty = require('pretty');
 
 document = jsdom.getDocument(),
 document.__ENV__ = "testing",
 window = jsdom.getWindow();
 router = rewire("../../web/static/js/app.js");
 
+function cleanHTML(html){
+	return pretty(html
+		.replace(/=\'(.*)\'/, "=\"$1\"")	//replace single quotes with doubles in element args
+		.replace(/[\n\t]/g, "")				//remove newlines / tabs
+		.replace(/\>\s+\</g, "")			//remove whitespaces between elements
+		.replace(/ [^=]*=""/g, ""))			//remove empty attributes
+}
+
 assert.htmlEqual = function(htmlA, htmlB){
 	assert.equal(
-		htmlA.replace(/=\'(.*)\'/, "=\"$1\"").replace(/[\n\t]/g, "").replace(/\>\s+\</g, ""),
-		htmlB.replace(/=\'(.*)\'/, "=\"$1\"").replace(/[\n\t]/g, "").replace(/\>\s+\</g, "")
+		cleanHTML(htmlA),
+		cleanHTML(htmlB)
 	);
 };
 
 describe('Tent Router', function() {
 	var build_section_tree = router.__get__("build_section_tree");
 	var load_path = router.__get__("load_path");
+	var link_click = router.__get__("link_click");
 
 	//override GET function
 	var httpGETresponse;
-	router.__set__("httpGET", function(url, callback){
+	router.__set__("httpGET", function httpGET(url, callback){
 		callback(httpGETresponse[url]);
 	});
 	//override window.history
 	var window_history
-	router.__set__("pushToHistory", function(title, path){
+	router.__set__("pushToHistory", function pushToHistory(title, path){
 		window_history.push({path: path, title: title});
 	});
 
@@ -259,6 +269,82 @@ describe('Tent Router', function() {
 		assert.htmlEqual(st[0].elem.outerHTML, `
 			<router-section data-path="dogs">
 				<p class='text'>some dogs</p>
+			</router-section>
+		`);
+	});
+
+	it('Should load relative (nested) paths from router-link click', function(){
+		document.body.innerHTML = `
+		<router-section data-path="dogs">
+			<router-link path="cats" id="nested"></router-link>
+			<router-section></router-section>
+		</router-section>`;
+		var st = build_section_tree(document.getElementsByTagName('router-section'));
+		router.__set__("sections_tree", st);
+
+		httpGETresponse = {
+			"/sections/dogs/cats": "<p class='text'>this is some text</p>"
+		};
+		link_click({target: document.getElementById("nested")});
+		assert.htmlEqual(st[0].elem.outerHTML, `
+			<router-section data-path="dogs">
+				<router-link path="cats" id="nested" class="selected"></router-link>
+				<router-section data-path="cats">
+					<p class='text'>this is some text</p>
+				</router-section>
+			</router-section>
+		`);
+	});
+
+	it('Adds click event to router-link functions even when loaded from router-section', function(){
+		document.body.innerHTML = `<router-section></router-section>`;
+		var st = build_section_tree(document.getElementsByTagName('router-section'));
+
+		httpGETresponse = {
+			"/sections/cats": "<router-link path='dogs' id='my-link'></router-link><router-section></router-section>"
+		};
+		load_path("/cats", st);
+		var link = document.getElementById("my-link");
+		assert.equal(link.onclick, link_click);
+	});
+
+	//based on a bug found in browser
+	it('Should load nested sections even after switching', function(){
+		document.body.innerHTML = `
+		<router-link id="btn1" path="developers">Add</router-link>
+		<router-link id="btn2" path="projects">Add</router-link>
+		<router-section data-path="projects" data-match=".*">
+			<div class="projects">
+				<h2 class="title">Projects</h2>
+				<router-link id="btn3" path="create">Add</router-link>
+				<router-section data-match="create"></router-section>
+			</div>
+		</router-section>`;
+		var st = build_section_tree(document.getElementsByTagName('router-section'));
+		router.__set__("sections_tree", st);
+
+		httpGETresponse = {
+			"/sections/projects": `
+			<div class="projects">
+				<h2 class="title">Projects</h2>
+				<router-link id="btn3" path="create">Add</router-link>
+				<router-section data-match="create"></router-section>
+			</div>`,
+			"/sections/developers": "",
+			"/sections/projects/create": "<form>create</form>"
+		};
+		link_click({target: document.getElementById("btn1")});
+		link_click({target: document.getElementById("btn2")});
+		link_click({target: document.getElementById("btn3")});
+		assert.htmlEqual(document.body.innerHTML, `
+			<router-link id="btn1" path="developers">Add</router-link>
+			<router-link id="btn2" path="projects">Add</router-link>
+			<router-section data-path="projects" data-match=".*">
+				<div class="projects">
+					<h2 class="title">Projects</h2>
+					<router-link id="btn3" path="create" class="selected">Add</router-link>
+					<router-section data-path="create" data-match="create"><form>create</form></router-section>
+				</div>
 			</router-section>
 		`);
 	});

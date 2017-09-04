@@ -1,16 +1,14 @@
 //useful macros
 var d = document;
-d.$tag = d.getElementsByTagName;
-d.$class = d.getElementsByClassName;
-d.$id = d.getElementById;
 // router code, all other scripts are imported asychronously
-var links = [];
 var sections_tree = [];
 (function(){
 	if(document.__ENV__ == "testing"){ return; }
-	links = d.$tag('router-link');
-	var sections = d.$tag('router-section');
+	//build section tree
+	var sections = d.getElementsByTagName('router-section');
 	sections_tree = build_section_tree(sections);
+	//add router-link click events
+	var links = d.getElementsByTagName('router-link');
 	for (var i = 0; i < links.length; i++) {
 		links[i].onclick = link_click;
 	}
@@ -18,13 +16,18 @@ var sections_tree = [];
 //change path based on router-link clicks
 function link_click(e){
 	//set ours to selected and none others
-	var selected = d.$class('selected');
+	var selected = d.getElementsByClassName('selected');
 	for (var i = 0; i < selected.length; i++) {
 		selected[i].classList.remove("selected");
 	}
 	e.target.classList.add("selected");
 	//set the path of our page
 	var path = e.target.getAttribute("path");
+	if(!path){ return; }
+	//if relative, add the scope path
+	if(path[0] != '/'){
+		path = getScope(e.target) + "/" + path;
+	}
 	load_path(path, sections_tree);
 };
 //make an async GET request
@@ -57,8 +60,17 @@ window.onpopstate = function(e){
 };
 //load a given path without reloading (in-page)
 function load_path(path, st, callback){
-	_load_path(path, st, function(subsection, st_i){
+	_load_path(path, st, "", _copy_elem(st, function(){
+		pushToHistory("A Title", path);
+		if(callback)
+			callback();
+	}));
+}
+//apply the changes of _load_path to the DOM tree / section tree
+function _copy_elem(st, callback){
+	return function(subsection, st_i){
 		if(subsection != null){
+			//console.log("done", subsection.elem.outerHTML, st_i);
 			//copy attributes of existing DOM element
 			var attr = st[st_i].elem.attributes;
 			for (var i = 0; i < attr.length; i++) {
@@ -70,13 +82,13 @@ function load_path(path, st, callback){
 			st[st_i].elem.parentNode.replaceChild(subsection.elem, st[st_i].elem);
 			st[st_i].elem = subsection.elem;
 			st[st_i].children = subsection.children;
-			pushToHistory("A Title", path);
 		}
-		if(callback)
-			callback();
-	});
+		return callback();
+	}
 }
-function _load_path(path, st, callback){
+function _load_path(path, st, scope, callback){
+	//ignore empty section trees
+	if(!st){ return callback(); }
 	//split path by slashes
 	var split = path.split("/");
 	//remove empty path components
@@ -85,42 +97,58 @@ function _load_path(path, st, callback){
 	});
 	//don't load a path if it's already loaded
 	if(st[0].elem.getAttribute("data-path") == split[0]){
+		if(split.length > 1){
+			var new_path = split.splice(1).join("/");
+			scope += split[0] + "/";
+			//console.log("calling back", scope, new_path, st[0].elem.outerHTML)
+			var st = st[0].children;
+			//don't touch this level, go one deeper
+			return _load_path(new_path, st, scope, _copy_elem(st, callback));
+		}
 		return callback();
 	}
-	httpGET("/sections/" + split[0], function(resp){
+	//console.log("requesting", "/sections/" + scope + split[0])
+	httpGET("/sections/" + scope + split[0], function(resp){
 		//make shadow element
 		var section = document.createElement("router-section");
 		section.innerHTML = resp;
 		section.setAttribute("data-path", split[0]);
+		//add link click event
+		var links = section.getElementsByTagName('router-link');
+		for (var i = 0; i < links.length; i++) {
+			links[i].onclick = link_click;
+		}
+		//get children sections
+		var children = build_section_tree(section.getElementsByTagName("router-section"));
 		//load path again, one level deeper
 		split.splice(0, 1);
 		var new_path = split.join("/");
 		//console.log("new path", new_path, resp);
 		if(new_path.length > 0){
-			//rebuild router-section tree
-			var children = build_section_tree(section.getElementsByTagName("router-section"));
 			//console.log("going down", new_path, children[0]);
-			_load_path(new_path, children, function(subsection, st_i){
-				children[st_i].elem.innerHTML = subsection.elem.innerHTML;
-				children[st_i].elem.setAttribute("data-path", new_path);
-				//console.log("done loading sub path", new_path, subsection.elem.outerHTML);
-				callback({
-					elem: section,
-					children: children
-				}, 0);
-			});
-		//if we're done (no more path to load)
-		}else{
-			//just pick the first one for now
-			callback({
-				elem: section
-			}, 0);
+			if(children.length > 0){
+				return _load_path(new_path, children, scope, function(subsection, st_i){
+					children[st_i].elem.innerHTML = subsection.elem.innerHTML;
+					children[st_i].elem.setAttribute("data-path", new_path);
+					//console.log("done loading sub path", new_path, subsection.elem.outerHTML);
+					callback({
+						elem: section,
+						children: children
+					}, 0);
+				});
+			}
 		}
+		//just pick the first one for now
+		return callback({
+			elem: section,
+			children: children
+		}, 0);
 	}, function(error){
 		console.log("GET error", error);
 		callback();
 	});
 };
+//checks if parent is a parent of child
 function isDescendant(parent, child) {
      var node = child.parentNode;
      while (node != null) {
@@ -131,6 +159,19 @@ function isDescendant(parent, child) {
      }
      return false;
 };
+//get scope of an element
+function getScope(elem){
+	var scope = "";
+	var node = elem.parentNode;
+	while (node != null) {
+		if(node.tagName == "ROUTER-SECTION"){
+			scope += "/" + node.getAttribute("data-path");
+		}
+		node = node.parentNode;
+	}
+	return scope;
+}
+//print tree (for debugging)
 function print_tree(tree, tab_level){
 	if(!tab_level){ tab_level = 0; }
 	for (var i = 0; i < tree.length; i++) {

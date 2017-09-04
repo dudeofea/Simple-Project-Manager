@@ -1,11 +1,12 @@
 <div class="projects">
 	<h2 class="title">Projects</h2>
-	<router-link class="btn add-edit-button" path="/create">Add</router-link>
+	<router-link class="btn add-edit-button" path="create">Add</router-link>
 	<table class="table table-striped">
 		<thead>
 			<tr>
 				<td>Id</td>
 				<td>Name</td>
+				<td>Repo</td>
 			</tr>
 		</thead>
 		<tbody>
@@ -13,26 +14,10 @@
 				<tr>
 					<td><%= project.id %></td>
 					<td><%= project.name %></td>
+					<td><%= project.git_link %></td>
 				</tr>
 			<% end %>
 		</tbody>
 	</table>
-	<create-modal
-		v-bind:hub="hub"
-		title="Developer"
-		v-bind:table="page_name">
-	</create-modal>
 	<%= router "create", assigns %>
-	<!-- //TODO: add close button / close when click overlay to modal -->
-	<div class="modal-wrapper" v-bind:class="{show : show}">
-		<div class="back"></div>
-		<div class="modal">
-			<span class="close" v-on:click="close()">X</span>
-			<h4>Create a new {{ title }}</h4>
-			<div v-for="f in form_fields">
-				<input type="text" class="form-input" :placeholder="f.title" v-model="form[f.property]"/>
-			</div>
-			<div class="btn" v-on:click="submit()">Create</div>
-		</div>
-	</div>
 </div>

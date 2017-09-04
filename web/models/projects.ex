@@ -4,11 +4,12 @@ defmodule TicketSystem.Project do
   @derive {Poison.Encoder, only: [:id, :name, :inserted_at, :updated_at]}
   schema "projects" do
 	field :name, :string
+	field :git_link, :string
 
 	timestamps()
   end
 
-  @required_fields ~w(name)
+  @required_fields ~w(name, git_link)
   @optional_fields ~w()
 
   @doc """
@@ -18,5 +19,6 @@ defmodule TicketSystem.Project do
     struct
     |> cast(params, [])
     |> validate_required(@required_fields)
+	|> unique_constraint(:name)
   end
 end
