@@ -152,9 +152,9 @@ describe('Tent Router', function() {
 			<p>not cats</p>
 		</router-section>`;
 		var ans = `
-		<router-section data-path="cats">
+		<router-section path="cats">
 			<p>cats</p>
-			<router-section data-path="snookum">
+			<router-section path="snookum">
 				<p>Snookum</p>
 			</router-section>
 		</router-section>`;
@@ -162,10 +162,10 @@ describe('Tent Router', function() {
 
 		httpGETresponse = {
 			"/sections/cats": "<p>cats</p><router-section><p>not Snookum</p></router-section>",
-			"/sections/snookum": "<p>Snookum</p>"
+			"/sections/cats/snookum": "<p>Snookum</p>"
 		};
 		load_path("/cats/snookum", st, function(){
-			assert.htmlEqual(st[0].elem.innerHTML, `<p>cats</p><router-section data-path="snookum"><p>Snookum</p></router-section>`);
+			assert.htmlEqual(st[0].elem.innerHTML, `<p>cats</p><router-section path="snookum"><p>Snookum</p></router-section>`);
 			assert.htmlEqual(st[0].children[0].elem.innerHTML, "<p>Snookum</p>");
 			assert.htmlEqual(document.body.innerHTML, ans);
 			assert.equal(window_history.length, 1);
@@ -182,7 +182,7 @@ describe('Tent Router', function() {
 			<p>also not cats</p>
 		</router-section>`;
 		var ans = `
-		<router-section data-path="cats">
+		<router-section path="cats">
 			<p>cats</p>
 		</router-section>
 		<router-section>
@@ -249,7 +249,7 @@ describe('Tent Router', function() {
 			};
 			load_path("/cats", st, function(){
 				assert.htmlEqual(st[0].elem.innerHTML, "<p class='text'>cats</p>");
-				assert.equal(st[0].elem.getAttribute("data-path"), "cats");
+				assert.equal(st[0].elem.getAttribute("path"), "cats");
 			});
 		});
 	});
@@ -267,52 +267,52 @@ describe('Tent Router', function() {
 		load_path("/cats", st);
 		load_path("/dogs", st);
 		assert.htmlEqual(st[0].elem.outerHTML, `
-			<router-section data-path="dogs">
+			<router-section path="dogs">
 				<p class='text'>some dogs</p>
 			</router-section>
 		`);
 	});
 
-	it('Should load relative nested paths from router-link click', function(){
+	it('Should load relative templates declared on router-section', function(){
 		document.body.innerHTML = `
-		<router-section data-path="dogs">
+		<router-section path="dogs">
 			<router-link path="cats" id="nested"></router-link>
-			<router-section></router-section>
+			<router-section template="cats-dynamic"></router-section>
 		</router-section>`;
 		var st = build_section_tree(document.getElementsByTagName('router-section'));
 		router.__set__("sections_tree", st);
 
 		httpGETresponse = {
-			"/sections/dogs/cats": "<p class='text'>this is some text</p>"
+			"/sections/dogs/cats-dynamic": "<p class='text'>this is some text</p>"
 		};
 		link_click({target: document.getElementById("nested")});
 		assert.htmlEqual(st[0].elem.outerHTML, `
-			<router-section data-path="dogs">
+			<router-section path="dogs">
 				<router-link path="cats" id="nested" class="selected"></router-link>
-				<router-section data-path="cats">
+				<router-section path="cats" template="cats-dynamic">
 					<p class='text'>this is some text</p>
 				</router-section>
 			</router-section>
 		`);
 	});
 
-	it('Should load absolute nested paths from router-link click', function(){
+	it('Should load absolute templates declared on router-section', function(){
 		document.body.innerHTML = `
-		<router-section data-path="dogs">
-			<router-link path="/cats" id="nested"></router-link>
-			<router-section></router-section>
+		<router-section path="dogs">
+			<router-link path="cats" id="nested"></router-link>
+			<router-section template="/cats-static"></router-section>
 		</router-section>`;
 		var st = build_section_tree(document.getElementsByTagName('router-section'));
 		router.__set__("sections_tree", st);
 
 		httpGETresponse = {
-			"/sections/cats": "<p class='text'>this is some more text</p>"
+			"/sections/cats-static": "<p class='text'>this is some more text</p>"
 		};
 		link_click({target: document.getElementById("nested")});
 		assert.htmlEqual(st[0].elem.outerHTML, `
-			<router-section data-path="dogs">
-				<router-link path="/cats" id="nested" class="selected"></router-link>
-				<router-section data-path="cats">
+			<router-section path="dogs">
+				<router-link path="cats" id="nested" class="selected"></router-link>
+				<router-section path="cats" template="/cats-static">
 					<p class='text'>this is some more text</p>
 				</router-section>
 			</router-section>
@@ -336,7 +336,7 @@ describe('Tent Router', function() {
 		document.body.innerHTML = `
 		<router-link id="btn1" path="developers">Add</router-link>
 		<router-link id="btn2" path="projects">Add</router-link>
-		<router-section data-path="projects" data-match=".*">
+		<router-section path="projects">
 			<div class="projects">
 				<h2 class="title">Projects</h2>
 				<router-link id="btn3" path="create">Add</router-link>
@@ -362,13 +362,82 @@ describe('Tent Router', function() {
 		assert.htmlEqual(document.body.innerHTML, `
 			<router-link id="btn1" path="developers">Add</router-link>
 			<router-link id="btn2" path="projects">Add</router-link>
-			<router-section data-path="projects" data-match=".*">
+			<router-section path="projects">
 				<div class="projects">
 					<h2 class="title">Projects</h2>
 					<router-link id="btn3" path="create" class="selected">Add</router-link>
-					<router-section data-path="create" data-match="create"><form>create</form></router-section>
+					<router-section path="create" data-match="create"><form>create</form></router-section>
 				</div>
 			</router-section>
+		`);
+	});
+
+	it('Should reload /projects from /projects/create', function(){
+		document.body.innerHTML = `
+		<router-link id="btn1" path="developers">Add</router-link>
+		<router-link id="btn2" path="projects" reload="true">Add</router-link>
+		<router-section path="projects">
+			<div class="projects">
+				<h2 class="title">Projects</h2>
+				<router-link id="btn3" path="create">Add</router-link>
+				<router-section data-match="create"></router-section>
+			</div>
+		</router-section>`;
+		var st = build_section_tree(document.getElementsByTagName('router-section'));
+		router.__set__("sections_tree", st);
+
+		httpGETresponse = {
+			"/sections/projects": `
+			<div class="projects">
+				<h2 class="title">Projects</h2>
+				<router-link id="btn3" path="create">Add</router-link>
+				<router-section data-match="create"></router-section>
+			</div>`,
+			"/sections/developers": "",
+			"/sections/projects/create": "<form>create</form>"
+		};
+		link_click({target: document.getElementById("btn1")});
+		link_click({target: document.getElementById("btn2")});
+		link_click({target: document.getElementById("btn3")});
+		link_click({target: document.getElementById("btn2")});
+		assert.htmlEqual(document.body.innerHTML, `
+			<router-link id="btn1" path="developers">Add</router-link>
+			<router-link id="btn2" path="projects" reload="true" class="selected">Add</router-link>
+			<router-section path="projects">
+				<div class="projects">
+					<h2 class="title">Projects</h2>
+					<router-link id="btn3" path="create">Add</router-link>
+					<router-section data-match="create"></router-section>
+				</div>
+			</router-section>
+		`);
+	});
+
+	it('Should be able to override router-link scope', function(){
+		document.body.innerHTML = `
+		<router-section path="projects">
+			<div class="projects">
+				<h2 class="title">Projects</h2>
+				<router-link id="btn3" path="/developers">Add</router-link>
+				<router-section data-match="create"></router-section>
+			</div>
+		</router-section>`;
+		var st = build_section_tree(document.getElementsByTagName('router-section'));
+		router.__set__("sections_tree", st);
+
+		httpGETresponse = {
+			"/sections/projects": `
+			<div class="projects">
+				<h2 class="title">Projects</h2>
+				<router-link id="btn3" path="create">Add</router-link>
+				<router-section data-match="create"></router-section>
+			</div>`,
+			"/sections/developers": "",
+			"/sections/projects/create": "<form>create</form>"
+		};
+		link_click({target: document.getElementById("btn3")});
+		assert.htmlEqual(document.body.innerHTML, `
+			<router-section path="developers"></router-section>
 		`);
 	});
 

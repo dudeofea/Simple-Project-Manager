@@ -20,19 +20,21 @@ function link_click(e){
 	for (var i = 0; i < selected.length; i++) {
 		selected[i].classList.remove("selected");
 	}
-	e.target.classList.add("selected");
+	var el = e.target;
+	el.classList.add("selected");
 	//set the path of our page
-	var path = e.target.getAttribute("path");
+	var path = el.getAttribute("path");
 	if(!path){ return; }
+	var reload = (el.getAttribute("reload") != null);
 	//if relative, add the scope path and stick with
 	//sections_tree as root
 	if(path[0] != '/'){
-		path = getScope(e.target) + "/" + path;
-		load_path(path, sections_tree);
+		path = getScope(el) + "/" + path;
+		load_path(path, sections_tree, {reload: reload});
 	//if the path is absolute, find nearest router section
 	//to use as root instead of sections_tree
 	}else{
-		load_path(path, getSection(sections_tree, e.target));
+		load_path(path, sections_tree, {reload: reload});
 	}
 };
 //make an async GET request
@@ -64,8 +66,10 @@ window.onpopstate = function(e){
 	//TODO: this
 };
 //load a given path without reloading (in-page)
-function load_path(path, st, callback){
-	_load_path(path, st, "", _copy_elem(st, function(){
+function load_path(path, st, args, callback){
+	if(!args){ args = {}; }
+	args.scope = "";
+	_load_path(path, st, args, _copy_elem(st, function(){
 		pushToHistory("A Title", path);
 		if(callback)
 			callback();
@@ -80,7 +84,7 @@ function _copy_elem(st, callback){
 			var attr = st[st_i].elem.attributes;
 			for (var i = 0; i < attr.length; i++) {
 				var a = attr.item(i);
-				if(a.nodeName != "data-path")
+				if(a.nodeName != "path")
 					subsection.elem.setAttribute(a.nodeName, a.nodeValue);
 			}
 			//replace element in DOM
@@ -91,7 +95,7 @@ function _copy_elem(st, callback){
 		return callback();
 	}
 }
-function _load_path(path, st, scope, callback){
+function _load_path(path, st, args, callback){
 	//ignore empty section trees
 	if(!st){ return callback(); }
 	//split path by slashes
@@ -100,24 +104,30 @@ function _load_path(path, st, scope, callback){
 	split = split.filter(function(s){
 		return s.length > 0;
 	});
-	//don't load a path if it's already loaded
-	if(st[0].elem.getAttribute("data-path") == split[0]){
+	//don't load a path if it's already loaded, unless we're reloading
+	if(!args.reload && st[0].elem.getAttribute("path") == split[0]){
 		if(split.length > 1){
 			var new_path = split.splice(1).join("/");
-			scope += split[0] + "/";
+			args.scope += split[0] + "/";
 			//console.log("calling back", scope, new_path, st[0].elem.outerHTML)
 			var st = st[0].children;
 			//don't touch this level, go one deeper
-			return _load_path(new_path, st, scope, _copy_elem(st, callback));
+			return _load_path(new_path, st, args, _copy_elem(st, callback));
 		}
 		return callback();
 	}
-	//console.log("requesting", "/sections/" + scope + split[0])
-	httpGET("/sections/" + scope + split[0], function(resp){
+	var template = st[0].elem.getAttribute("template");
+	if(!template){
+		template = '/' + args.scope + split[0];
+	}else if(template[0] != '/'){
+		template = '/' + args.scope + template;
+	}
+	//console.log("requesting", "/sections" + template)
+	httpGET("/sections" + template, function(resp){
 		//make shadow element
 		var section = document.createElement("router-section");
 		section.innerHTML = resp;
-		section.setAttribute("data-path", split[0]);
+		section.setAttribute("path", split[0]);
 		//add link click event
 		var links = section.getElementsByTagName('router-link');
 		for (var i = 0; i < links.length; i++) {
@@ -132,9 +142,9 @@ function _load_path(path, st, scope, callback){
 		if(new_path.length > 0){
 			//console.log("going down", new_path, children[0]);
 			if(children.length > 0){
-				return _load_path(new_path, children, scope, function(subsection, st_i){
+				return _load_path(new_path, children, args.scope, function(subsection, st_i){
 					children[st_i].elem.innerHTML = subsection.elem.innerHTML;
-					children[st_i].elem.setAttribute("data-path", new_path);
+					children[st_i].elem.setAttribute("path", new_path);
 					//console.log("done loading sub path", new_path, subsection.elem.outerHTML);
 					callback({
 						elem: section,
@@ -170,7 +180,7 @@ function getScope(elem){
 	var node = elem.parentNode;
 	while (node != null) {
 		if(node.tagName == "ROUTER-SECTION"){
-			scope += "/" + node.getAttribute("data-path");
+			scope += "/" + node.getAttribute("path");
 		}
 		node = node.parentNode;
 	}
