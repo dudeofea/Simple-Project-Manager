@@ -51,26 +51,20 @@ function httpGET(theUrl, callback, error){
     xmlHttp.send(null);
 };
 //add a page to browser history
-function pushToHistory(title, path){
-    document.title = title;
-    window.history.pushState(path.replace("/", "") ,title, path);
+function pushToHistory(path){
+    window.history.pushState({path: path, title: document.title}, null, path);
 };
 //used for forward/back in browser
 window.onpopstate = function(e){
-    // linkClick(window.location.href, true);
-    // if(e.state){
-    //     document.title = e.state.pageTitle;
-    // }else{
-    //     document.title = "Denis Lachance";
-    // }
-	//TODO: this
+	load_path(e.state.path, sections_tree, {reload: true});
+	document.title = e.state.title;
 };
 //load a given path without reloading (in-page)
 function load_path(path, st, args, callback){
 	if(!args){ args = {}; }
 	args.scope = "";
 	_load_path(path, st, args, _copy_elem(st, function(){
-		pushToHistory("A Title", path);
+		pushToHistory(path);
 		if(callback)
 			callback();
 	}));

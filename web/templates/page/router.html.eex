@@ -1,4 +1,4 @@
-<router-section data-match="<%= @match_str %>"<%= if @router_path do %> data-path="<%= @router_path %>"<% end %>>
+<router-section <%= if @router_path do %> path="<%= @router_path %>"<% end %><%= if @template do %> template="/<%= @template %>"<% end %>>
 	<%= if @router_path do %>
 		<%= render @router_path <> ".html", assigns %>
 	<% end %>

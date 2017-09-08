@@ -1,7 +1,7 @@
 defmodule TicketSystem.PageView do
 	use TicketSystem.Web, :view
 
-	def router(match_str \\ ".*", assigns) do
+	def router(assigns, template \\ nil) do
 		#get template name
 		current_path = case Map.has_key?(assigns, :scoped_path) do
 			true -> assigns.scoped_path
@@ -18,8 +18,8 @@ defmodule TicketSystem.PageView do
 			path -> path
 		end
 		assigns = Map.put(assigns, :router_path, router_path)
-		assigns = Map.put(assigns, :match_str, match_str)
 		assigns = Map.put(assigns, :scoped_path, scoped_path)
+		assigns = Map.put(assigns, :template, template)
 		require IEx; IEx.pry
 		#render the section
 		render "router.html", assigns

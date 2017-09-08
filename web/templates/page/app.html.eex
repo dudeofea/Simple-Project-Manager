@@ -1,4 +1,4 @@
 <div class="app">
 	<%= render "header.html", assigns %>
-	<%= router ".*", assigns %>
+	<%= router assigns %>
 </div>

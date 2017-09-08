@@ -1,4 +1,6 @@
 #!/bin/bash
+DATABASE_PASS=cats
+DATABASE_TABLE=phoenix
 
 #install erlang
 wget https://packages.erlang-solutions.com/erlang-solutions_1.0_all.deb
