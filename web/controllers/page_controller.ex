@@ -3,11 +3,11 @@ defmodule TicketSystem.PageController do
 
 	#get the requested section
 	def get(conn, _) do
-		[view_path] = case conn.section_page do
-			true -> conn.params["path"]
-			false -> ["app"]
-		end
 		require IEx; IEx.pry
+		view_path = case conn.section_page do
+			true -> Enum.join(conn.params["path"], "/")
+			false -> "app"
+		end
 		render conn, view_path <> ".html"
 	end
 end
