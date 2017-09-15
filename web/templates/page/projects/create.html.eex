@@ -1,0 +1,12 @@
+<!-- //TODO: add close button / close when click overlay to modal -->
+<div class="modal-wrapper">
+	<router-link class="back" path="/projects" reload="true"></router-link>
+	<div class="modal">
+		<span class="close" v-on:click="close()">X</span>
+		<h4>Create a new Project</h4>
+		<div v-for="f in form_fields">
+			<input type="text" class="form-input" :placeholder="f.title" v-model="form[f.property]"/>
+		</div>
+		<div class="btn" v-on:click="submit()">Create</div>
+	</div>
+</div>
