@@ -8,11 +8,19 @@ var sections_tree = [];
 	var sections = d.getElementsByTagName('router-section');
 	sections_tree = build_section_tree(sections);
 	//add router-link click events
-	var links = d.getElementsByTagName('router-link');
+	add_link_events(d);
+})();
+//add onclick event to all router-link found in elem
+function add_link_events(elem){
+	var links = elem.getElementsByTagName('router-link');
 	for (var i = 0; i < links.length; i++) {
 		links[i].onclick = link_click;
 	}
-})();
+	links = elem.getElementsByClassName('router-link');
+	for (var i = 0; i < links.length; i++) {
+		links[i].onclick = link_click;
+	}
+}
 //change path based on router-link clicks
 function link_click(e){
 	//set ours to selected and none others
@@ -30,11 +38,11 @@ function link_click(e){
 	//sections_tree as root
 	if(path[0] != '/'){
 		path = getScope(el) + "/" + path;
-		load_path(path, sections_tree, {reload: reload});
+		load_path(path, {tree: sections_tree, reload: reload});
 	//if the path is absolute, find nearest router section
 	//to use as root instead of sections_tree
 	}else{
-		load_path(path, sections_tree, {reload: reload});
+		load_path(path, {tree: sections_tree, reload: reload});
 	}
 };
 //make an async GET request
@@ -56,14 +64,17 @@ function pushToHistory(path){
 };
 //used for forward/back in browser
 window.onpopstate = function(e){
-	load_path(e.state.path, sections_tree, {reload: true});
+	load_path(e.state.path, {tree: sections_tree, reload: true});
 	document.title = e.state.title;
 };
 //load a given path without reloading (in-page)
-function load_path(path, st, args, callback){
+function load_path(path, args, callback){
 	if(!args){ args = {}; }
+	//if(!args.tree){ args.tree = sections_tree; }
 	args.scope = "";
-	_load_path(path, st, args, _copy_elem(st, function(){
+	//console.log("loading", path);
+	_load_path(path, args.tree, args, _copy_elem(args.tree, function(){
+		//console.log("loaded", path);
 		pushToHistory(path);
 		if(callback)
 			callback();
@@ -85,6 +96,11 @@ function _copy_elem(st, callback){
 			st[st_i].elem.parentNode.replaceChild(subsection.elem, st[st_i].elem);
 			st[st_i].elem = subsection.elem;
 			st[st_i].children = subsection.children;
+			//run JS in script tags
+			var scripts = st[st_i].elem.getElementsByTagName("script");
+			for (var i = 0; i < scripts.length; i++) {
+				eval(scripts[i].innerHTML);
+			}
 		}
 		return callback();
 	}
@@ -98,23 +114,25 @@ function _load_path(path, st, args, callback){
 	split = split.filter(function(s){
 		return s.length > 0;
 	});
-	//don't load a path if it's already loaded, unless we're reloading
-	if(!args.reload && st[0].elem.getAttribute("path") == split[0]){
-		if(split.length > 1){
-			var new_path = split.splice(1).join("/");
-			args.scope += split[0] + "/";
-			//console.log("calling back", scope, new_path, st[0].elem.outerHTML)
-			var st = st[0].children;
-			//don't touch this level, go one deeper
-			return _load_path(new_path, st, args, _copy_elem(st, callback));
-		}
-		return callback();
-	}
+	//get template path
 	var template = st[0].elem.getAttribute("template");
 	if(!template){
 		template = '/' + args.scope + split[0];
 	}else if(template[0] != '/'){
 		template = '/' + args.scope + template;
+	}
+	//make scope one level deeper
+	args.scope += split[0] + "/";
+	//don't load a path if it's already loaded, unless we're reloading
+	if(!args.reload && st[0].elem.getAttribute("path") == split[0]){
+		if(split.length > 1){
+			var new_path = split.splice(1).join("/");
+			//console.log("calling back", args.scope, new_path, st[0].elem.outerHTML)
+			var st = st[0].children;
+			//don't touch this level, go one deeper
+			return _load_path(new_path, st, args, _copy_elem(st, callback));
+		}
+		return callback();
 	}
 	//console.log("requesting", "/sections" + template)
 	httpGET("/sections" + template, function(resp){
@@ -122,21 +140,19 @@ function _load_path(path, st, args, callback){
 		var section = document.createElement("router-section");
 		section.innerHTML = resp;
 		section.setAttribute("path", split[0]);
-		//add link click event
-		var links = section.getElementsByTagName('router-link');
-		for (var i = 0; i < links.length; i++) {
-			links[i].onclick = link_click;
-		}
+		//add link click events
+		add_link_events(section);
 		//get children sections
 		var children = build_section_tree(section.getElementsByTagName("router-section"));
 		//load path again, one level deeper
 		split.splice(0, 1);
 		var new_path = split.join("/");
+
 		//console.log("new path", new_path, resp);
 		if(new_path.length > 0){
-			//console.log("going down", new_path, children[0]);
+			//console.log("going down", new_path, children[0], args);
 			if(children.length > 0){
-				return _load_path(new_path, children, args.scope, function(subsection, st_i){
+				return _load_path(new_path, children, args, function(subsection, st_i){
 					children[st_i].elem.innerHTML = subsection.elem.innerHTML;
 					children[st_i].elem.setAttribute("path", new_path);
 					//console.log("done loading sub path", new_path, subsection.elem.outerHTML);

@@ -2,11 +2,16 @@
 <div class="modal-wrapper">
 	<router-link class="back" path="/projects" reload="true"></router-link>
 	<div class="modal">
-		<span class="close" v-on:click="close()">X</span>
+		<router-link class="close" path="/projects" reload="true">X</router-link>
 		<h4>Create a new Project</h4>
 		<div v-for="f in form_fields">
 			<input type="text" class="form-input" :placeholder="f.title" v-model="form[f.property]"/>
 		</div>
-		<div class="btn" v-on:click="submit()">Create</div>
+		<div class="btn router-link" path="/projects" reload="true">Create</div>
 	</div>
 </div>
+<script>
+function submit(){
+	console.log("hey");
+};
+</script>

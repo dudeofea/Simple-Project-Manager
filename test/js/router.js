@@ -28,6 +28,7 @@ describe('Tent Router', function() {
 	var build_section_tree = router.__get__("build_section_tree");
 	var load_path = router.__get__("load_path");
 	var link_click = router.__get__("link_click");
+	var add_link_events = router.__get__("add_link_events");
 
 	//override GET function
 	var httpGETresponse;
@@ -36,8 +37,8 @@ describe('Tent Router', function() {
 	});
 	//override window.history
 	var window_history
-	router.__set__("pushToHistory", function pushToHistory(title, path){
-		window_history.push({path: path, title: title});
+	router.__set__("pushToHistory", function pushToHistory(path){
+		window_history.push({path: path});
 	});
 
 	beforeEach(function(){
@@ -134,15 +135,15 @@ describe('Tent Router', function() {
 	it('Should load router sections using a given path (simple)', function(){
 		document.body.innerHTML = `
 		<router-section>
-			<p>not cats</p>
+			<p>not seals</p>
 		</router-section>`;
 		var st = build_section_tree(document.getElementsByTagName('router-section'));
 
-		httpGETresponse = {"/sections/cats": "<p>cats</p>"};
-		load_path("/cats", st, function(){
-			assert.equal(st[0].elem.innerHTML, "<p>cats</p>");
+		httpGETresponse = {"/sections/seals": "<p>seals</p>"};
+		load_path("/seals", {tree: st}, function(){
+			assert.equal(st[0].elem.innerHTML, "<p>seals</p>");
 			assert.equal(window_history.length, 1);
-			assert.equal(window_history[0].path, "/cats");
+			assert.equal(window_history[0].path, "/seals");
 		});
 	});
 
@@ -164,7 +165,7 @@ describe('Tent Router', function() {
 			"/sections/cats": "<p>cats</p><router-section><p>not Snookum</p></router-section>",
 			"/sections/cats/snookum": "<p>Snookum</p>"
 		};
-		load_path("/cats/snookum", st, function(){
+		load_path("/cats/snookum", {tree: st}, function(){
 			assert.htmlEqual(st[0].elem.innerHTML, `<p>cats</p><router-section path="snookum"><p>Snookum</p></router-section>`);
 			assert.htmlEqual(st[0].children[0].elem.innerHTML, "<p>Snookum</p>");
 			assert.htmlEqual(document.body.innerHTML, ans);
@@ -193,7 +194,7 @@ describe('Tent Router', function() {
 		httpGETresponse = {
 			"/sections/cats": "<p>cats</p>"
 		};
-		load_path("/cats", st, function(){
+		load_path("/cats", {tree: st}, function(){
 			assert.htmlEqual(document.body.innerHTML, ans);
 		});
 	});
@@ -209,7 +210,7 @@ describe('Tent Router', function() {
 			</router-section>`,
 			"/sections/cats": "<p class='text'>cats</p>"
 		};
-		load_path("/my/cats", st, function(){
+		load_path("/my/cats", {tree: st}, function(){
 			var elem = st[0].elem.getElementsByClassName("my-class")[0]
 			assert.notEqual(elem, null);
 			assert.equal(elem.id, "5");
@@ -226,7 +227,7 @@ describe('Tent Router', function() {
 		httpGETresponse = {
 			"/sections/hey": ""
 		};
-		load_path("/hey", st, function(){
+		load_path("/hey", {tree: st}, function(){
 			var elem = st[0].elem;
 			assert.notEqual(elem, null);
 			assert.equal(elem.getAttribute("data-hey"), "yo");
@@ -243,11 +244,11 @@ describe('Tent Router', function() {
 		httpGETresponse = {
 			"/sections/cats": "<p class='text'>cats</p>"
 		};
-		load_path("/cats", st, function(){
+		load_path("/cats", {tree: st}, function(){
 			httpGETresponse = {
 				"/sections/cats": "<p class='text'>not cats</p>"
 			};
-			load_path("/cats", st, function(){
+			load_path("/cats", {tree: st}, function(){
 				assert.htmlEqual(st[0].elem.innerHTML, "<p class='text'>cats</p>");
 				assert.equal(st[0].elem.getAttribute("path"), "cats");
 			});
@@ -264,8 +265,8 @@ describe('Tent Router', function() {
 			"/sections/dogs": "<p class='text'>some dogs</p>"
 		};
 		//no need to nest, should run serially
-		load_path("/cats", st);
-		load_path("/dogs", st);
+		load_path("/cats", {tree: st});
+		load_path("/dogs", {tree: st});
 		assert.htmlEqual(st[0].elem.outerHTML, `
 			<router-section path="dogs">
 				<p class='text'>some dogs</p>
@@ -326,7 +327,22 @@ describe('Tent Router', function() {
 		httpGETresponse = {
 			"/sections/cats": "<router-link path='dogs' id='my-link'></router-link><router-section></router-section>"
 		};
-		load_path("/cats", st);
+		load_path("/cats", {tree: st});
+		var link = document.getElementById("my-link");
+		assert.equal(link.onclick, link_click);
+	});
+
+	//found this bug in the browser when loading a section whitin a section
+	it('Adds click event to router-link functions even when nested', function(){
+		document.body.innerHTML = `<router-section></router-section>`;
+		var st = build_section_tree(document.getElementsByTagName('router-section'));
+
+		httpGETresponse = {
+			"/sections/cats": "<router-link path='dogs'></router-link><router-section></router-section>",
+			"/sections/cats/dogs": "<router-link path='/cats' id='my-link'></router-link><p>hey</p>"
+		};
+		load_path("/cats", {tree: st});
+		load_path("/cats/dogs", {tree: st});
 		var link = document.getElementById("my-link");
 		assert.equal(link.onclick, link_click);
 	});
@@ -438,6 +454,39 @@ describe('Tent Router', function() {
 		link_click({target: document.getElementById("btn3")});
 		assert.htmlEqual(document.body.innerHTML, `
 			<router-section path="developers"></router-section>
+		`);
+	});
+
+	it('Should accept router-link class as well instead of tag', function(){
+		document.body.innerHTML = `
+		<div id="btn1" path="developers" class="a b c router-link some-other-class">Add</div>
+		<router-section></router-section>`;
+		var st = build_section_tree(document.getElementsByTagName('router-section'));
+		router.__set__("sections_tree", st);
+		add_link_events(document);
+
+		httpGETresponse = {
+			"/sections/developers": `
+			<div class="developers">
+				<h2 class="title">developers</h2>
+				<a id="btn2" path="create" class="router-link">Add</a>
+				<router-section data-match="create"></router-section>
+			</div>`,
+			"/sections/developers/create": `<form>create</form>`
+		};
+		document.getElementById("btn1").click();
+		document.getElementById("btn2").click();
+		assert.htmlEqual(document.body.innerHTML, `
+			<div id="btn1" path="developers" class="a b c router-link some-other-class">Add</div>
+			<router-section path="developers">
+				<div class="developers">
+					<h2 class="title">developers</h2>
+					<a id="btn2" path="create" class="router-link selected">Add</a>
+					<router-section path="create" data-match="create">
+						<form>create</form>
+					</router-section>
+				</div>
+			</router-section>
 		`);
 	});
 
