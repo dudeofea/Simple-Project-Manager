@@ -15,18 +15,14 @@ Next Steps:
 	- Add ability to add recurring costs (such as for hosting)
 	- Track all costs (from tickets / recurring) on temporal chart, and also show what the client has paid for
 - Add server management
-	- Manage staging / prod servers using an Ancible plugin (use it to setup / teardown external servers)
-	- Make server recipes (Ancible template files) that take in other existing servers as input arguments
-	- Example: A Postgres backup recipe that takes in a Postgres db as an input to backup from
-	- Example: A Phoenix web server recipe that takes in a Postgres db to connect to
+	- Write bash scripts (da best!) for all add/update/delete functions of apps (add web app, update db connection, etc)
+	- Add ability to make server clusters which run multiple websites and route via hostname using nginx
+	- Possibly use something like influxDB to pull all monitoring data for the servers and place it elsewhere
 	- Possibly show all servers / server interconnections in nice d3 graph
-	- Also see if you can make Ancible recipes that let you run on existing servers so you can save money instead of spinning up new droplets
 - Add git server / ticket based authorization
-	- Only one person can work on a ticket at the same time
-	- A ticket is marked done when it is merged into the dev branch via the web GUI
-	- To work on a ticket, you have to check it out in the web GUI, which will give your account permission to pull the ticket-<ticket no> branch
-	- You can work on multiple tickets at once, to stop working on one push your changes and check in your branch via the web GUI
-	- Not sure if every commit needs to be on a ticket...need to think about that
+	- Every commit should be on a ticket, even if that ticket is 0000 (uncategorized change). have the system complain about un-ticketed commits
+	- Use some kind of machine learning to infer the time spent on tickets solely by looking at the commits / timestamps
+	- Use that ML estimate of actual time spent and compare it to ticket parameters (difficulty, uncertainty, etc) to estimate how much time future tickets will take and therefore how much those tickets are worth
 	- use gitolite: https://git-scm.com/book/en/v1/Git-on-the-Server-Gitolite
 
 How to charge clients:

@@ -1,27 +1,32 @@
 defmodule TicketSystem.PageView do
 	use TicketSystem.Web, :view
 
-	def router(assigns, template \\ nil) do
+	#route requested templates both by section (return most nested view) or
+	#by page (return entire nested view stack)
+	def router(assigns, template \\ nil, renderer \\ &Phoenix.View.render/3) do
+		path = get_router_path(assigns.conn.path_info, Map.get(assigns.conn, :section_page), Map.get(assigns, :scoped_path), template)
+		assigns = Map.merge(assigns, path)
+		#render the section
+		renderer.(TicketSystem.PageView, "router.html", assigns)
+	end
+
+	#determine what path to route to
+	def get_router_path(path, section_page \\ nil, scoped_path \\ nil, template \\ nil) do
 		#get template name
-		current_path = case Map.has_key?(assigns, :scoped_path) do
-			true -> assigns.scoped_path
+		current_path = case scoped_path != nil do
+			true -> scoped_path
 			false ->
 				#remove /sections/<section_name> from path info if we're on a section page
-				case Map.has_key?(assigns.conn, :section_page) and assigns.conn.section_page do
-					true -> Enum.take(assigns.conn.path_info, 2 - length(assigns.conn.path_info))
-					false -> assigns.conn.path_info
+				case section_page != nil do
+					true -> Enum.take(path, 1 - length(path))
+					false -> path
 				end
 		end
 		#remove head as router_path, tail become nested scoped_path
-		[router_path | scoped_path] = case current_path do
+		[router_path | new_scoped_path] = case current_path do
 			[] -> [nil]
-			path -> path
+			cpath -> cpath
 		end
-		assigns = Map.put(assigns, :router_path, router_path)
-		assigns = Map.put(assigns, :scoped_path, scoped_path)
-		assigns = Map.put(assigns, :template, template)
-		require IEx; IEx.pry
-		#render the section
-		render "router.html", assigns
+		%{router_path: router_path, scoped_path: new_scoped_path, template: template}
 	end
 end

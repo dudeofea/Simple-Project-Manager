@@ -3,8 +3,7 @@ defmodule TicketSystem.PageController do
 
 	#get the requested section
 	def get(conn, _) do
-		require IEx; IEx.pry
-		view_path = case conn.section_page do
+		view_path = case Map.has_key?(conn, :section_page) and conn.section_page do
 			true -> Enum.join(conn.params["path"], "/")
 			false -> "app"
 		end

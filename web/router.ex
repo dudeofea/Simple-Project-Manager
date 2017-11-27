@@ -55,7 +55,7 @@ defmodule TicketSystem.Router do
 		pipe_through [:browser, :section]
 
 		for %{path: path, controller: controller} <- controllers do
-			get path, controller, :get
+			get path <> "/*path", controller, :get
 		end
 		get "/*path", PageController, :get
 	end
@@ -65,7 +65,7 @@ defmodule TicketSystem.Router do
 		pipe_through :browser # Use the default browser stack
 
 		for %{path: path, controller: controller} <- controllers do
-			get path, controller, :get
+			get path <> "/*path", controller, :get
 		end
 		get "/*path", PageController, :get
 	end

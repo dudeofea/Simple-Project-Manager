@@ -1,3 +1,49 @@
+//
+//	Each web page is organized into several <router-section> elements,
+//	they can be as big or small as needed, the point is to reuse them. Each
+//	section has 2 main properties:
+//		- path: the path to match to activate this section, examples:
+//			"/", "*", "/dogs/*", "/cats"
+//		- template: the location to fetch the template, if not provided then
+//			template = path and a request for that section will be made as such.
+//			so if your back-end can handle "/dogs/*.html" then cool, otherwise you
+//			might want to define a template like "/dogs.html". if "/dogs/45" is the
+//			path selected, we will include that in the request for you to use under
+//			a GET body attributes called "path" (much naming, such terse)
+//
+//	You can of course nest sections, if you have a section with path "/create" inside
+//	a section called "/projects", going to the location (URL) "/projects/create" will
+//	bring you there.
+//
+//	The second part of sections is the <router-link> element, it essentially does
+//	the same thing as <a> except relative paths (those that don't start with /)
+//	will load based on the scope of the link. Example:
+//
+//	<router-section path="/foo">
+//		<router-link path="bar">
+//		<router-link path="/baz">
+//		<router-link path="../boz">
+//	</router-section>
+//
+//	Links to "/foo/bar", "/baz", and "/boz" respectively. The last one is useful if you
+//	want to undo some of the nesting the link is in but not all of it. It essentially
+//	works the same as file directories
+//
+//	The template param for sections is also subject to scope, so:
+//
+//	<router-section path="/animal">
+//		<router-section path="cat"></router-section>
+//		<router-section path="dog" template="/dog.html"></router-section>
+//		<router-section path="iguana" template="../iguana-template"></router-section>
+//	</router-section>
+//
+//	Will be triggered on requests for "/animal/cat", "/animal/dog", and "/animal/iguana"
+//	And their templates will be requested from "/animal/cat", "/dog.html", and "/iguana-template"
+//	when loading the section. Basically the user makes a request for "/animal/dog" and we know
+//	to fetch (no pun intended) "/dog.html" to get that section's content. When loading a full
+//	page, the back-end should be able to pre-load all required sections into a single html
+//	page to speed up the initial page load
+//
 //useful macros
 var d = document;
 // router code, all other scripts are imported asychronously
