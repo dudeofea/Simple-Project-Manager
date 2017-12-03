@@ -1,0 +1,23 @@
+<div class="projects">
+	<h2 class="title">Projects</h2>
+	<router-link class="btn add-edit-button" path="create">Add</router-link>
+	<table class="table table-striped">
+		<thead>
+			<tr>
+				<td>Id</td>
+				<td>Name</td>
+				<td>Repo</td>
+			</tr>
+		</thead>
+		<tbody>
+			<%= for project <- @api do %>
+				<tr>
+					<td><%= project.id %></td>
+					<td><%= project.name %></td>
+					<td><%= project.git_link %></td>
+				</tr>
+			<% end %>
+		</tbody>
+	</table>
+	<%= mock_router assigns, "create" %>
+</div>

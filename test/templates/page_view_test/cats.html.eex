@@ -1,0 +1,2 @@
+<p>Cats</p>
+<%= mock_router assigns, "iguanas" %>
