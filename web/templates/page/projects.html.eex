@@ -19,5 +19,5 @@
 			<% end %>
 		</tbody>
 	</table>
-	<%= router assigns, "create" %>
+	<%= router assigns, "projects/create" %>
 </div>

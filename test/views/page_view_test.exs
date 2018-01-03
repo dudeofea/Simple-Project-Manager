@@ -83,6 +83,7 @@ defmodule TicketSystem.PageViewTest do
 		assert clean_html(page) == clean_html(ans)
 	end
 
+	@tag :debug
 	test "GET /sections/dogs/cats" do
 		# add get request to connection
 		conn = build_conn(:get, "/sections/dogs/cats")
@@ -90,8 +91,20 @@ defmodule TicketSystem.PageViewTest do
 		conn = Map.put(conn, :section_page, true)
 		assigns = %{conn: conn}
 		assigns = Map.put(assigns, :api, [])
+		page = render(TicketSystem.PageViewTest, "cats.html", assigns) |> Phoenix.HTML.safe_to_string
+		#we're just supposed to get the "cats" portion as this is just a section, not
+		#a full page. Though the path is still /dogs/cats
+		ans =  "<p>Cats</p>
+				<router-section template=\"iguanas\"></router-section>"
+		assert clean_html(page) == clean_html(ans)
+	end
+
+	test "GET /dogs/cats full page" do
+		# add get request to connection
+		conn = build_conn(:get, "/dogs/cats")
+		assigns = %{conn: conn}
+		assigns = Map.put(assigns, :api, [])
 		page = render(TicketSystem.PageViewTest, "dogs.html", assigns) |> Phoenix.HTML.safe_to_string
-		#page = TicketSystem.PageView.router(assigns, nil, &mock_render/3) |> Phoenix.HTML.safe_to_string
 		ans =  "<p>Dogs</p>
 				<router-section path=\"cats\" template=\"cats\">
 					<p>Cats</p>

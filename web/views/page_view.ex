@@ -3,13 +3,15 @@ defmodule TicketSystem.PageView do
 
 	#route requested templates both by section (return most nested view) or
 	#by page (return entire nested view stack)
-	def router(assigns, template \\ nil, renderer \\ &Phoenix.View.render/3) do
+	def router(assigns, template \\ nil, renderer \\ &Phoenix.View.render/3, module \\ TicketSystem.PageView) do
 		#IO.puts inspect(assigns.conn)
 		path = get_router_path(assigns.conn.path_info, Map.get(assigns.conn, :section_page), Map.get(assigns, :scoped_path), template)
+		{_, _, names} = module.__templates__()
 		assigns = Map.merge(assigns, path)
-		#IO.puts "#{inspect(path)} #{inspect(assigns.conn.path_info)}"
+		assigns = Map.put(assigns, :template_names, names)
+		#IO.puts "#{inspect("app2.html" in names)} #{inspect(assigns.conn.path_info)}"
 		#render the section
-		renderer.(TicketSystem.PageView, "router.html", assigns)
+		renderer.(module, "router.html", assigns)
 	end
 
 	#determine what path to route to
