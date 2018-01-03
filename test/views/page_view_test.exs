@@ -3,12 +3,8 @@ defmodule TicketSystem.PageViewTest do
 	use Phoenix.View, root: "test/templates"
 
 	#helper functions
-	def mock_render(_, template, assigns) do
-		render(TicketSystem.PageViewTest, template, assigns)
-	end
-
 	def mock_router(assigns, template) do
-		TicketSystem.PageView.router(assigns, template, &mock_render/3)
+		TicketSystem.PageView.router(assigns, template, TicketSystem.PageViewTest)
 	end
 
 	def clean_html(string) do
