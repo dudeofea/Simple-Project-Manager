@@ -33,6 +33,11 @@ defmodule TicketSystem.PageView do
 			[] -> [nil]
 			cpath -> cpath
 		end
+		#we don't need to nest when loading sections
+		router_path = case section_page do
+			true -> nil
+			_ -> router_path
+		end
 		%{
 			router_path: router_path,
 			scoped_path: new_scoped_path,

@@ -32,3 +32,7 @@ How to charge clients:
 - If the client wants the software to do something that is not outlined in any existing tickets (even if it's a bug), that's a new ticket and so it costs money
 - Charge $20 / month for running the website (host web server on DO droplet, Postgres on another droplet, and an auto-replicate Postgres on another droplet, and keep weekly backups on bigass external drive at home)
 - Never keep any state in web server, reinstalling web server should be not much more than a git clone + database hookup
+
+Wordpress fuckery:
+- Don't forget to store the db_backups somewhere
+- Don't forget to set the "siteurl" / "home" to the correct value in the wp_option table

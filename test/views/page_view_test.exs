@@ -3,7 +3,7 @@ defmodule TicketSystem.PageViewTest do
 	use Phoenix.View, root: "test/templates"
 
 	#helper functions
-	def mock_router(assigns, template) do
+	def mock_router(assigns, template \\ nil) do
 		TicketSystem.PageView.router(assigns, template, TicketSystem.PageViewTest)
 	end
 
@@ -29,6 +29,15 @@ defmodule TicketSystem.PageViewTest do
 	#(as well as /section) must be skipped, so the router path ends up being nil
 	test "load /projects section" do
 		path = TicketSystem.PageView.get_router_path(["sections", "projects"], true, nil, nil)
+		assert path[:router_path] == nil
+		assert path[:template] == nil
+	end
+
+	#added this test since I noticed problems with 2-path components (no counting /sections);
+	#sections are isolated, so they should not have a router_path used for nesting deeper.
+	#I guess you could make sections not nest all the way down but that would be too complicated for not much reward
+	test "load /projects/create section" do
+		path = TicketSystem.PageView.get_router_path(["sections", "projects", "create"], true, nil, nil)
 		assert path[:router_path] == nil
 		assert path[:template] == nil
 	end
@@ -100,13 +109,17 @@ defmodule TicketSystem.PageViewTest do
 		conn = build_conn(:get, "/dogs/cats")
 		assigns = %{conn: conn}
 		assigns = Map.put(assigns, :api, [])
-		page = render(TicketSystem.PageViewTest, "dogs.html", assigns) |> Phoenix.HTML.safe_to_string
-		ans =  "<p>Dogs</p>
-				<router-section path=\"cats\" template=\"cats\">
-					<p>Cats</p>
-					<router-section template=\"iguanas\">
+		page = render(TicketSystem.PageViewTest, "app.html", assigns) |> Phoenix.HTML.safe_to_string
+		ans =  "<div class=\"app\">
+					<router-section path=\"dogs\" template=\"dogs\">
+						<p>Dogs</p>
+						<router-section path=\"cats\" template=\"cats\">
+							<p>Cats</p>
+							<router-section template=\"iguanas\">
+							</router-section>
+						</router-section>
 					</router-section>
-				</router-section>"
+				</div>"
 		assert clean_html(page) == clean_html(ans)
 	end
 end
