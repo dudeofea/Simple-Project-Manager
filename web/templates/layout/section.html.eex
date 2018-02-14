@@ -1,1 +1,7 @@
-<%= render @view_module, @view_template, assigns %>
+<%=
+try do
+	render @view_module, @view_template, assigns
+catch
+	rendered_section -> rendered_section
+end
+%>

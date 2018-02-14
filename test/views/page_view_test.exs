@@ -7,6 +7,14 @@ defmodule TicketSystem.PageViewTest do
 		TicketSystem.PageView.router(assigns, path, template, TicketSystem.PageViewTest)
 	end
 
+	def mock_section_layout(view_module, view_template, assigns) do
+		try do
+			render(view_module, view_template, assigns)
+		catch
+			rendered_section -> rendered_section
+		end
+	end
+
 	def clean_html(string) do
 		string = Regex.replace(~r/[\t\n]/, string, "")
 		Regex.replace(~r/[ ]+/, string, " ")
@@ -70,7 +78,7 @@ defmodule TicketSystem.PageViewTest do
 		conn = Map.put(conn, :section_page, true)
 		assigns = %{conn: conn}
 		assigns = Map.put(assigns, :api, [])
-		page = render(TicketSystem.PageViewTest, "projects_test1.html", assigns) |> Phoenix.HTML.safe_to_string
+		page = mock_section_layout(TicketSystem.PageViewTest, "app.html", assigns) |> Phoenix.HTML.safe_to_string
 		ans =  "<h2 class=\"title\">Projects</h2>"
 		assert clean_html(page) == clean_html(ans)
 	end
@@ -82,7 +90,7 @@ defmodule TicketSystem.PageViewTest do
 		conn = Map.put(conn, :section_page, true)
 		assigns = %{conn: conn}
 		assigns = Map.put(assigns, :api, [])
-		page = render(TicketSystem.PageViewTest, "dogs.html", assigns) |> Phoenix.HTML.safe_to_string
+		page = mock_section_layout(TicketSystem.PageViewTest, "app.html", assigns) |> Phoenix.HTML.safe_to_string
 		ans =  "<p>Dogs</p>
 				<router-section trigger=\"cats\"></router-section>"
 		assert clean_html(page) == clean_html(ans)
@@ -96,7 +104,7 @@ defmodule TicketSystem.PageViewTest do
 		conn = Map.put(conn, :section_page, true)
 		assigns = %{conn: conn}
 		assigns = Map.put(assigns, :api, [])
-		page = render(TicketSystem.PageViewTest, "cats.html", assigns) |> Phoenix.HTML.safe_to_string
+		page = mock_section_layout(TicketSystem.PageViewTest, "app.html", assigns) |> Phoenix.HTML.safe_to_string
 		#we're just supposed to get the "cats" portion as this is just a section, not
 		#a full page. Though the path is still /dogs/cats
 		ans =  "<p>Cats</p>
@@ -122,4 +130,6 @@ defmodule TicketSystem.PageViewTest do
 				</div>"
 		assert clean_html(page) == clean_html(ans)
 	end
+
+	#TODO: add test for when a section request has multiple sections in the last nested router-section
 end
