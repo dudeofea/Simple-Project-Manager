@@ -1,5 +1,5 @@
-<router-section <%= if @router_path do %> path="<%= @router_path %>"<% end %><%= if @template do %> template="<%= @template %>"<% end %>>
-	<%= if @router_path != nil and @template <> ".html" in @template_names do %>
-		<%= render @template <> ".html", assigns %>
+<router-section<%= if @context[:trigger] do %> trigger="<%= @context[:trigger] %>"<% end %><%= if @context[:current_path] do %> path="<%= @context[:current_path] %>"<% end %>>
+	<%= if @context[:template] != nil and @context[:template] <> ".html" in @template_names do %>
+		<%= render @context[:template] <> ".html", assigns %>
 	<% end %>
 </router-section>
