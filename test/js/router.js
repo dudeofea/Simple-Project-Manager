@@ -1,3 +1,4 @@
+//Run tests with `npm test`
 var assert = require('assert'),
 	rewire = require('rewire'),
 	MockBrowser = require('mock-browser').mocks.MockBrowser,

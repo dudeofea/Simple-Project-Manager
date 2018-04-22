@@ -1,6 +1,6 @@
 <%=
 try do
-	render @view_module, @view_template, assigns
+	render @view_module, "app.html", assigns
 catch
 	rendered_section -> rendered_section
 end

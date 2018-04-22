@@ -1,12 +1,13 @@
 defmodule TicketSystem.PageViewTest do
 	use TicketSystem.ConnCase
-	use Phoenix.View, root: "test/templates"
+	use Phoenix.View, root: "test/templates", pattern: "**/*"
 
-	#helper functions
+	#pretend to be the real router, switching between app and section views
 	def mock_router(assigns, path \\ nil, template \\ nil) do
 		TicketSystem.PageView.router(assigns, path, template, TicketSystem.PageViewTest)
 	end
 
+	#catch thrown exception when nesting is cut short
 	def mock_section_layout(view_module, view_template, assigns) do
 		try do
 			render(view_module, view_template, assigns)
@@ -96,7 +97,6 @@ defmodule TicketSystem.PageViewTest do
 		assert clean_html(page) == clean_html(ans)
 	end
 
-	@tag :debug
 	test "GET /sections/dogs/cats" do
 		# add get request to connection
 		conn = build_conn(:get, "/sections/dogs/cats")
@@ -127,6 +127,34 @@ defmodule TicketSystem.PageViewTest do
 							</router-section>
 						</router-section>
 					</router-section>
+				</div>"
+		assert clean_html(page) == clean_html(ans)
+	end
+
+	#test that /sections/projects DOESN'T return the contents of /sections/projects/create
+	test "GET /sections/projects (prod inspired)" do
+		# add get request to connection
+		conn = build_conn(:get, "/sections/projects_test2")
+		# set section bool
+		conn = Map.put(conn, :section_page, true)
+		assigns = %{conn: conn}
+		assigns = Map.put(assigns, :api, [])
+		page = mock_section_layout(TicketSystem.PageViewTest, "app.html", assigns) |> Phoenix.HTML.safe_to_string
+		ans =  "<div class=\"projects\">
+					<h2 class=\"title\">Projects</h2>
+					<router-link class=\"btn add-edit-button\" path=\"create\">Add</router-link>
+					<table class=\"table table-striped\">
+						<thead>
+							<tr>
+								<td>Id</td>
+								<td>Name</td>
+								<td>Repo</td>
+							</tr>
+						</thead>
+						<tbody>
+						</tbody>
+					</table>
+					<router-section trigger=\"create\"></router-section>
 				</div>"
 		assert clean_html(page) == clean_html(ans)
 	end
