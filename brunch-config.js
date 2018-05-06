@@ -2,14 +2,11 @@ exports.config = {
   // See http://brunch.io/#documentation for docs.
   files: {
     javascripts: {
-      joinTo: "js/app.js"
-
-      // To use a separate vendor.js bundle, specify two files path
-      // http://brunch.io/docs/config#-files-
-      // joinTo: {
-      //  "js/app.js": /^(web\/static\/js)/,
-      //  "js/vendor.js": /^(web\/static\/vendor)|(deps)/
-      // }
+      //To use a separate vendor.js bundle, specify two files path
+      //http://brunch.io/docs/config#-files-
+      joinTo: {
+       "js/app.js": /^(web\/static\/js)/
+      }
       //
       // To change the order of concatenation of files, explicitly mention here
       // order: {
@@ -51,7 +48,6 @@ exports.config = {
 	  copycat:{
       "js" : ["web/static/js", "priv/static/js"],
       verbose : true, //shows each file that is copied to the destination directory
-      onlyChanged: true //only copy a file if it's modified time has changed (only effective when using brunch watch)
   	},
 	sass: {
 		mode: 'native'

@@ -1,7 +1,8 @@
 defmodule TicketSystem.Project do
   use TicketSystem.Web, :model
 
-  @derive {Poison.Encoder, only: [:id, :name, :inserted_at, :updated_at]}
+  def labels do %{name: "Name", git_link: "Git Link"} end
+
   schema "projects" do
 	field :name, :string
 	field :git_link, :string

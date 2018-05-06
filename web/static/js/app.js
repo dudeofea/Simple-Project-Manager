@@ -69,12 +69,17 @@ function add_link_events(elem){
 }
 //change path based on router-link clicks
 function link_click(e){
+	var el = e.target;
+	//trigger the pretrigger event handler
+	var pretrigger = el.getAttribute("pretrigger");
+	if(window[pretrigger] != null){
+		window[pretrigger](e);
+	}
 	//set ours to selected and none others
 	var selected = d.getElementsByClassName('selected');
 	for (var i = 0; i < selected.length; i++) {
 		selected[i].classList.remove("selected");
 	}
-	var el = e.target;
 	el.classList.add("selected");
 	//set the path of our page
 	var path = el.getAttribute("path");

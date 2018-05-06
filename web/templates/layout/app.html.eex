@@ -6,7 +6,23 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="">
     <meta name="author" content="">
-
+	<script type="text/javascript">
+	//TODO: add ability to import multiple scripts, and change forms.js
+	require = function(url, callback){
+	    // Adding the script tag to the head as suggested before
+	    var head = document.getElementsByTagName('head')[0];
+	    var script = document.createElement('script');
+	    script.type = 'text/javascript';
+	    script.src = "/js/" + url + ".js";
+	    // Then bind the event to the callback function.
+	    // There are several events for cross browser compatibility.
+	    script.onreadystatechange = callback;
+	    script.onload = callback;
+	    // Fire the loading
+	    head.appendChild(script);
+	}
+	require("app");
+	</script>
     <title>Simple Project Manager</title>
     <link rel="stylesheet" href="<%= static_path(@conn, "/css/app.css") %>">
 	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:400,300">
@@ -14,6 +30,5 @@
   <base href="/">
   <body>
   	<%= render @view_module, "app.html", assigns %>
-	<script defer src="<%= static_path(@conn, "/js/app.js") %>"></script>
   </body>
 </html>

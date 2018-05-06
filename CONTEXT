@@ -25,6 +25,11 @@ Next Steps:
 	- Use that ML estimate of actual time spent and compare it to ticket parameters (difficulty, uncertainty, etc) to estimate how much time future tickets will take and therefore how much those tickets are worth
 	- use gitolite: https://git-scm.com/book/en/v1/Git-on-the-Server-Gitolite
 
+Problems:
+- when you remove reload=true from router-link, the page doesn't change. only work when it reloads the page
+- app.js is blank for some reason now
+  - for some reason, it's the live reload. it works if you start / stop the phoenix server
+
 How to charge clients:
 - New tickets cost money, they cost a fixed amount based on a time estimate of the developer and their code speed(s)
 - Once tickets are paid for, they are guaranteed to work as intended in the software product
