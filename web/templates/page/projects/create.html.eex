@@ -1,4 +1,3 @@
-<!-- //TODO: add close button / close when click overlay to modal -->
 <div class="modal-wrapper">
 	<router-link class="back" path="/projects" reload="true"></router-link>
 	<div class="modal">
@@ -9,10 +8,12 @@
 	</div>
 </div>
 <script>
+var form = null;
 require("form", function(){
-	Form(document.getElementsByClassName("modal-wrapper")[0], "projects");
+	form = Form(document.getElementsByClassName("modal-wrapper")[0], "projects");
 });
 function submit(){
-
+	console.log("submit loaded");
+	form.submit();
 };
 </script>

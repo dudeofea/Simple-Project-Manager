@@ -10,7 +10,7 @@ defmodule TicketSystem.Project do
 	timestamps()
   end
 
-  @required_fields ~w(name, git_link)
+  @required_fields ~w(name git_link)a
   @optional_fields ~w()
 
   @doc """
@@ -19,7 +19,7 @@ defmodule TicketSystem.Project do
   def changeset(struct, params \\ %{}) do
     struct
     |> cast(params, [])
-    |> validate_required(@required_fields)
+    #|> validate_required(@required_fields)
 	|> unique_constraint(:name)
   end
 end

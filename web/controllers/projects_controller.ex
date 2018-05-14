@@ -15,6 +15,7 @@ defmodule TicketSystem.ProjectsController do
 
 	#create a new project
 	def create(conn, new_obj) do
+		IO.puts "obj: #{inspect(new_obj)}"
 		changeset = Project.changeset(%Project{}, new_obj)
 		case Repo.insert(changeset) do
 		{:ok, obj} ->

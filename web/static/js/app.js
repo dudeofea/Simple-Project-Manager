@@ -150,7 +150,9 @@ function _copy_elem(st, callback){
 			//run JS in script tags
 			var scripts = st[st_i].elem.getElementsByTagName("script");
 			for (var i = 0; i < scripts.length; i++) {
-				eval(scripts[i].innerHTML);
+				//TODO: possibly eval on regular (not global) scope and use some kind of
+				//namespacing with "global" functions declared on section scripts.
+				eval.call(window, scripts[i].innerHTML);
 			}
 		}
 		return callback();

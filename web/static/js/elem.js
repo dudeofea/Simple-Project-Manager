@@ -13,14 +13,18 @@ if(typeof document == "undefined" || document == null){
 	test = true;
 }
 
-Elem = function(tag, cla, content){
+Elem = function(tag, attributes, content){
 	//create the element
 	var e = document.createElement(tag);
-	if(cla){
-		e.className = cla;
-	}
 	if(typeof content != "undefined"){
 		e.innerHTML = content;
+	}
+	if(attributes){
+		for (var a in attributes) {
+			if (attributes.hasOwnProperty(a)) {
+				e.setAttribute(a, attributes[a]);
+			}
+		}
 	}
 	//add custom functions
 	e.addClass = function(name){
